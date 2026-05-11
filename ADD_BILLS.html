@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Recurring Bills - Quick Setup</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .credentials {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+        .credentials strong {
+            color: #667eea;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 15px;
+        }
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        #status {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+        #status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        #status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        #status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .bill-list {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        .bill-item {
+            padding: 10px;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .bill-item:last-child {
+            border-bottom: none;
+        }
+        .bill-name {
+            font-weight: 600;
+            color: #333;
+        }
+        .bill-amount {
+            color: #667eea;
+            font-weight: 700;
+        }
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔔 Add Upcoming Bills</h1>
+        <p class="subtitle">Quick setup for recurring transactions in your dashboard</p>
+        
+        <div class="credentials">
+            <strong>Demo Account:</strong><br>
+            Email: demo@example.com<br>
+            Password: demo123
+        </div>
+
+        <div class="bill-list">
+            <h3 style="margin-bottom: 15px; color: #667eea;">Bills to Add:</h3>
+            <div class="bill-item">
+                <div>
+                    <div class="bill-name">⚡ Electricity Bill</div>
+                    <div style="font-size: 12px; color: #666;">Due: Nov 21, 2025</div>
+                </div>
+                <div class="bill-amount">₹120.00</div>
+            </div>
+            <div class="bill-item">
+                <div>
+                    <div class="bill-name">📺 Netflix</div>
+                    <div style="font-size: 12px; color: #666;">Due: Nov 22, 2025</div>
+                </div>
+                <div class="bill-amount">₹49.99</div>
+            </div>
+            <div class="bill-item">
+                <div>
+                    <div class="bill-name">🌐 Internet</div>
+                    <div style="font-size: 12px; color: #666;">Due: Nov 23, 2025</div>
+                </div>
+                <div class="bill-amount">₹15.00</div>
+            </div>
+            <div class="bill-item">
+                <div>
+                    <div class="bill-name">🎵 Spotify Premium</div>
+                    <div style="font-size: 12px; color: #666;">Due: Nov 24, 2025</div>
+                </div>
+                <div class="bill-amount">₹30.00</div>
+            </div>
+        </div>
+
+        <button id="addBillsBtn" onclick="addRecurringBills()">
+            Add All Bills to Dashboard
+        </button>
+
+        <button onclick="window.location.href='http://localhost:5173'" style="background: #28a745;">
+            Open Dashboard
+        </button>
+
+        <div id="status"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8080/api';
+        let authToken = null;
+
+        const bills = [
+            {
+                amount: 120.00,
+                category: 'Utilities',
+                type: 'EXPENSE',
+                currency: 'USD',
+                transactionDate: '2025-10-21',
+                description: 'Electricity bill',
+                merchant: 'Power Company',
+                paymentMethod: 'Auto Pay',
+                isRecurring: true,
+                recurringFrequency: 'MONTHLY',
+                nextDueDate: '2025-11-21'
+            },
+            {
+                amount: 49.99,
+                category: 'Subscriptions',
+                type: 'EXPENSE',
+                currency: 'USD',
+                transactionDate: '2025-10-20',
+                description: 'Netflix subscription',
+                merchant: 'Netflix',
+                paymentMethod: 'Credit Card',
+                isRecurring: true,
+                recurringFrequency: 'MONTHLY',
+                nextDueDate: '2025-11-22'
+            },
+            {
+                amount: 15.00,
+                category: 'Utilities',
+                type: 'EXPENSE',
+                currency: 'USD',
+                transactionDate: '2025-10-20',
+                description: 'Internet bill',
+                merchant: 'ISP Provider',
+                paymentMethod: 'Auto Pay',
+                isRecurring: true,
+                recurringFrequency: 'MONTHLY',
+                nextDueDate: '2025-11-23'
+            },
+            {
+                amount: 30.00,
+                category: 'Subscriptions',
+                type: 'EXPENSE',
+                currency: 'USD',
+                transactionDate: '2025-10-18',
+                description: 'Spotify Premium',
+                merchant: 'Spotify',
+                paymentMethod: 'Credit Card',
+                isRecurring: true,
+                recurringFrequency: 'MONTHLY',
+                nextDueDate: '2025-11-24'
+            }
+        ];
+
+        async function login() {
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'demo@example.com',
+                        password: 'demo123'
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success && data.data.token) {
+                    authToken = data.data.token;
+                    return true;
+                } else {
+                    throw new Error(data.message || 'Login failed');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                throw error;
+            }
+        }
+
+        async function addRecurringBills() {
+            const btn = document.getElementById('addBillsBtn');
+            const status = document.getElementById('status');
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loader"></span>Adding bills...';
+            status.style.display = 'none';
+
+            try {
+                // First, login to get auth token
+                status.className = 'info';
+                status.style.display = 'block';
+                status.textContent = '🔐 Logging in...';
+                
+                await login();
+
+                // Add each bill
+                status.textContent = '📝 Adding bills to database...';
+                let successCount = 0;
+
+                for (const bill of bills) {
+                    try {
+                        const response = await fetch(`${API_URL}/transactions`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${authToken}`
+                            },
+                            body: JSON.stringify(bill)
+                        });
+
+                        const data = await response.json();
+                        if (data.success) {
+                            successCount++;
+                        }
+                    } catch (error) {
+                        console.error(`Error adding ${bill.description}:`, error);
+                    }
+                }
+
+                if (successCount === bills.length) {
+                    status.className = 'success';
+                    status.textContent = `✅ Successfully added ${successCount} recurring bills! Go to the dashboard to see them in "Upcoming Bills" section.`;
+                    btn.innerHTML = '✓ Bills Added Successfully!';
+                    btn.style.background = '#28a745';
+                } else if (successCount > 0) {
+                    status.className = 'success';
+                    status.textContent = `⚠️ Added ${successCount} out of ${bills.length} bills. Some may already exist.`;
+                    btn.innerHTML = `Partially Complete (${successCount}/${bills.length})`;
+                    btn.disabled = false;
+                } else {
+                    throw new Error('Failed to add any bills');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                status.className = 'error';
+                status.textContent = `❌ Error: ${error.message}. Please make sure the backend is running on port 8080.`;
+                btn.innerHTML = 'Retry';
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

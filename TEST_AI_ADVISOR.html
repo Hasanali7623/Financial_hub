@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Advisor Test - Gemini API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .response-box {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            display: none;
+        }
+
+        .response-box.show {
+            display: block;
+        }
+
+        .response-box h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .response-text {
+            color: #333;
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .example-questions {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .example-questions h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .example-btn {
+            background: white;
+            color: #667eea;
+            border: 1px solid #667eea;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 12px;
+            margin: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .example-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .api-info {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196F3;
+        }
+
+        .api-info strong {
+            color: #1976D2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 AI Financial Advisor Test</h1>
+        <p class="subtitle">Testing Google Gemini API Integration</p>
+
+        <div id="statusBox" class="status warning">
+            ⚠️ Waiting to test connection...
+        </div>
+
+        <div class="api-info">
+            <strong>🔑 API Status:</strong> Google Gemini Pro<br>
+            <strong>🎯 Key:</strong> AIzaSyAu12r5JuVgIdkloI7eL14LiwOkH630nzA (First 10 chars)<br>
+            <strong>🌐 Endpoint:</strong> http://localhost:8080/api/ml/advice
+        </div>
+
+        <div class="input-group">
+            <label for="queryInput">💬 Ask Your Financial Question:</label>
+            <textarea 
+                id="queryInput" 
+                placeholder="Example: How can I save ₹10,000 per month from my ₹50,000 salary?"
+            >How can I save ₹10,000 per month from my ₹50,000 salary?</textarea>
+        </div>
+
+        <div class="input-group">
+            <label for="contextInput">📊 Context (Optional):</label>
+            <input 
+                type="text" 
+                id="contextInput" 
+                placeholder="Example: Monthly income: ₹50,000, Age: 28, Single"
+                value="Monthly income: ₹50,000, Age: 28, Single person"
+            >
+        </div>
+
+        <button id="testBtn" onclick="testAIAdvisor()">
+            🚀 Get AI Advice from Gemini
+        </button>
+
+        <div class="example-questions">
+            <h4>📝 Try These Example Questions:</h4>
+            <button class="example-btn" onclick="setQuestion('How can I save ₹10,000 per month?', 'Income: ₹50,000')">Savings Goal</button>
+            <button class="example-btn" onclick="setQuestion('Where should I invest ₹100,000 for 5 years?', 'Age: 30, Risk: Moderate')">Investment Strategy</button>
+            <button class="example-btn" onclick="setQuestion('How do I create an emergency fund?', 'Monthly expenses: ₹30,000')">Emergency Fund</button>
+            <button class="example-btn" onclick="setQuestion('Should I buy a house or continue renting?', 'Age: 32, Income: ₹80,000/month')">Buy vs Rent</button>
+        </div>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>🔮 Gemini is thinking... This may take 5-10 seconds</p>
+        </div>
+
+        <div id="responseBox" class="response-box">
+            <h3>💡 AI Advisor Response:</h3>
+            <div id="responseText" class="response-text"></div>
+        </div>
+    </div>
+
+    <script>
+        function setQuestion(question, context) {
+            document.getElementById('queryInput').value = question;
+            document.getElementById('contextInput').value = context;
+        }
+
+        async function testAIAdvisor() {
+            const query = document.getElementById('queryInput').value.trim();
+            const context = document.getElementById('contextInput').value.trim();
+            const testBtn = document.getElementById('testBtn');
+            const loading = document.getElementById('loading');
+            const responseBox = document.getElementById('responseBox');
+            const responseText = document.getElementById('responseText');
+            const statusBox = document.getElementById('statusBox');
+
+            if (!query) {
+                alert('Please enter a question!');
+                return;
+            }
+
+            // Show loading
+            testBtn.disabled = true;
+            loading.classList.add('show');
+            responseBox.classList.remove('show');
+            statusBox.className = 'status warning';
+            statusBox.innerHTML = '⏳ Sending request to Gemini API...';
+
+            try {
+                const requestBody = {
+                    query: query,
+                    context: context
+                };
+
+                console.log('Sending request:', requestBody);
+
+                const response = await fetch('http://localhost:8080/api/ml/advice', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                console.log('Response status:', response.status);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                console.log('Response data:', data);
+
+                // Check if it's fallback advice (static response)
+                const advice = data.data || data;
+                const isFallback = advice.includes('General Savings Advice:') || 
+                                 advice.includes('General Investment Advice:') ||
+                                 advice.includes('Emergency Fund Advice:') ||
+                                 advice.length < 200;
+
+                if (isFallback) {
+                    statusBox.className = 'status error';
+                    statusBox.innerHTML = '❌ WARNING: Received FALLBACK response! Gemini API not working. Check backend logs.';
+                } else {
+                    statusBox.className = 'status success';
+                    statusBox.innerHTML = '✅ SUCCESS! Gemini API responded with dynamic advice!';
+                }
+
+                responseText.textContent = advice;
+                responseBox.classList.add('show');
+
+            } catch (error) {
+                console.error('Error:', error);
+                statusBox.className = 'status error';
+                statusBox.innerHTML = `❌ ERROR: ${error.message}`;
+                responseText.textContent = `Failed to get advice: ${error.message}\n\nMake sure:\n1. Backend is running on port 8080\n2. You're logged in (or endpoint allows anonymous access)\n3. Gemini API key is configured`;
+                responseBox.classList.add('show');
+            } finally {
+                loading.classList.remove('show');
+                testBtn.disabled = false;
+            }
+        }
+
+        // Test connection on load
+        window.addEventListener('load', async () => {
+            const statusBox = document.getElementById('statusBox');
+            try {
+                const response = await fetch('http://localhost:8080/api/ml/advice', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: 'test', context: '' })
+                });
+                
+                if (response.status === 401 || response.status === 403) {
+                    statusBox.className = 'status warning';
+                    statusBox.innerHTML = '⚠️ Backend is running but requires authentication. Please log in to your app first, then come back here.';
+                } else {
+                    statusBox.className = 'status success';
+                    statusBox.innerHTML = '✅ Backend is connected and ready!';
+                }
+            } catch (e) {
+                statusBox.className = 'status error';
+                statusBox.innerHTML = '❌ Backend not responding. Make sure it\'s running on port 8080.';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: financial-health-dashboard-backend
+    runtime: java
+    rootDir: backend
+    plan: free
+    buildCommand: mvn clean package -DskipTests
+    startCommand: java -jar target/financial-health-dashboard-1.0.0.jar
+    healthCheckPath: /swagger-ui.html
+    envVars:
+      - key: JAVA_VERSION
+        value: 17
+      - key: PORT
+        value: 8080
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: OCR_SPACE_API_KEY
+        sync: false
+      - key: MAILGUN_API_KEY
+        sync: false
+      - key: MAILGUN_DOMAIN
+        sync: false
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false

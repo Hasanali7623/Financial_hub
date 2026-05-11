@@ -1,0 +1,44 @@
+{
+  "properties": [
+    {
+      "name": "jwt.secret",
+      "type": "java.lang.String",
+      "description": "Secret key for JWT token signing"
+    },
+    {
+      "name": "jwt.expiration",
+      "type": "java.lang.Long",
+      "description": "JWT token expiration time in milliseconds"
+    },
+    {
+      "name": "jwt.refresh.expiration",
+      "type": "java.lang.Long",
+      "description": "JWT refresh token expiration time in milliseconds"
+    },
+    {
+      "name": "ocr.space.api.key",
+      "type": "java.lang.String",
+      "description": "API key for OCR.space service"
+    },
+    {
+      "name": "gemini.api.key",
+      "type": "java.lang.String",
+      "description": "API key for Google Gemini AI service"
+    },
+    {
+      "name": "frankfurter.base.url",
+      "type": "java.lang.String",
+      "description": "Base URL for Frankfurter currency exchange API"
+    },
+    {
+      "name": "mailgun.api.key",
+      "type": "java.lang.String",
+      "description": "API key for Mailgun service (optional)"
+    },
+    {
+      "name": "mailgun.domain",
+      "type": "java.lang.String",
+      "description": "Domain for Mailgun service (optional)"
+    }
+  ]
+}

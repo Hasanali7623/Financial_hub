@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: finance_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: hasanali7623
+      MYSQL_DATABASE: finance_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - finance-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: finance_backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/finance_db?useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: hasanali7623
+      JWT_SECRET: ${JWT_SECRET:-yourSuperSecretJWTKeyThatIsAtLeast256BitsLongForHS256Algorithm}
+      OCR_SPACE_API_KEY: ${OCR_SPACE_API_KEY:-your_ocr_space_api_key}
+      HUGGINGFACE_API_KEY: ${HUGGINGFACE_API_KEY:-your_hf_api_key}
+      FRANKFURTER_BASE_URL: ${FRANKFURTER_BASE_URL:-https://api.frankfurter.app}
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - finance-network
+
+volumes:
+  mysql_data:
+
+networks:
+  finance-network:
+    driver: bridge
