@@ -29,14 +29,20 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const response = await api.post("/auth/login", { email, password });
-      const { accessToken, user: userData } = response.data.data;
-
-      localStorage.setItem("token", accessToken);
-      localStorage.setItem("user", JSON.stringify(userData));
-      api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-
-      setUser(userData);
-      return { success: true };
+      
+      if (response.data && response.data.success) {
+        const { accessToken, user: userData } = response.data.data;
+        localStorage.setItem("token", accessToken);
+        localStorage.setItem("user", JSON.stringify(userData));
+        api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+        setUser(userData);
+        return { success: true };
+      } else {
+        return {
+          success: false,
+          message: response.data?.message || "Login failed",
+        };
+      }
     } catch (error) {
       return {
         success: false,
@@ -52,14 +58,20 @@ export const AuthProvider = ({ children }) => {
         email,
         password,
       });
-      const { accessToken, user: userData } = response.data.data;
 
-      localStorage.setItem("token", accessToken);
-      localStorage.setItem("user", JSON.stringify(userData));
-      api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-
-      setUser(userData);
-      return { success: true };
+      if (response.data && response.data.success) {
+        const { accessToken, user: userData } = response.data.data;
+        localStorage.setItem("token", accessToken);
+        localStorage.setItem("user", JSON.stringify(userData));
+        api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+        setUser(userData);
+        return { success: true };
+      } else {
+        return {
+          success: false,
+          message: response.data?.message || "Registration failed",
+        };
+      }
     } catch (error) {
       return {
         success: false,

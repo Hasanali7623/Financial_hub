@@ -9,9 +9,12 @@ import {
   TrendingUp,
   Target,
   Trophy,
-  Sparkles,
   Calendar,
   DollarSign,
+  PieChart,
+  Wallet,
+  MoreVertical,
+  Flag
 } from "lucide-react";
 import { format, differenceInDays } from "date-fns";
 
@@ -50,7 +53,6 @@ export default function SavingsGoals() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Prepare data with proper types
       const goalData = {
         name: formData.name,
         targetAmount: parseFloat(formData.targetAmount),
@@ -145,6 +147,11 @@ export default function SavingsGoals() {
     return differenceInDays(new Date(targetDate), new Date());
   };
 
+  // Global Summaries
+  const totalCurrent = goals.reduce((sum, g) => sum + (Number(g.currentAmount) || 0), 0);
+  const totalTarget = goals.reduce((sum, g) => sum + (Number(g.targetAmount) || 0), 0);
+  const globalProgress = totalTarget > 0 ? Math.min((totalCurrent / totalTarget) * 100, 100) : 0;
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -155,238 +162,270 @@ export default function SavingsGoals() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="page-hero">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      {/* Top Header Card */}
+      <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-gray-100 dark:border-gray-700 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 bg-blue-50 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center border border-blue-100 dark:border-blue-800 shrink-0">
+            <Trophy className="h-7 w-7 text-blue-600 dark:text-blue-400" />
+          </div>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold mb-2 flex items-center text-gray-900 dark:text-gray-100">
-              <Trophy className="h-7 w-7 sm:h-8 sm:w-8 mr-3 text-gray-700 dark:text-gray-300" />
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
               Savings Goals
             </h1>
-            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
               ✨ Achieve your dreams with smart savings tracking
             </p>
           </div>
-          <button
-            onClick={() => setShowModal(true)}
-            className="btn-primary w-full sm:w-auto"
-          >
-            <Plus className="h-5 w-5 mr-2" />
-            Add Goal
-          </button>
         </div>
+        <button
+          onClick={() => setShowModal(true)}
+          className="w-full md:w-auto px-6 py-3 bg-[#0f172a] text-white rounded-xl font-medium transition hover:bg-slate-800 shadow-sm flex items-center justify-center gap-2"
+        >
+          <Plus className="h-5 w-5" /> Add Goal
+        </button>
       </div>
 
-      {/* Beautiful Goal Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {goals.map((goal) => {
-          const progress = getProgress(goal.currentAmount, goal.targetAmount);
-          const daysLeft = getDaysRemaining(goal.targetDate);
-          const isAchieved = progress >= 100;
-          const remaining = goal.targetAmount - goal.currentAmount;
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        {/* Left Side: Goal Cards Grid */}
+        <div className="xl:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 h-fit">
+          {goals.map((goal) => {
+            const progress = getProgress(goal.currentAmount, goal.targetAmount);
+            const daysLeft = getDaysRemaining(goal.targetDate);
+            const isAchieved = progress >= 100;
+            const remaining = goal.targetAmount - goal.currentAmount;
 
-          return (
-            <div
-              key={goal.id}
-              className={`rounded-lg p-6 hover:shadow-2xl transition-all duration-300 hover:scale-105 relative overflow-hidden shadow-lg border-2 ${
-                isAchieved
-                  ? "bg-gradient-to-br from-yellow-100 via-amber-100 to-orange-100 dark:from-yellow-900/30 dark:via-amber-900/30 dark:to-orange-900/30 border-yellow-500 dark:border-yellow-600"
-                  : "bg-gradient-to-br from-cyan-100 via-blue-100 to-indigo-100 dark:from-cyan-900/30 dark:to-blue-900/30 border-cyan-500 dark:border-cyan-700"
-              }`}
-            >
-              {/* Achievement Badge */}
-              {isAchieved && (
-                <div className="absolute top-0 right-0 left-0 bg-gradient-to-r from-yellow-400 via-amber-400 to-orange-400 text-white px-4 py-3 text-center animate-pulse">
-                  <div className="flex items-center justify-center space-x-2">
-                    <Trophy className="h-5 w-5" />
-                    <span className="font-bold text-lg">GOAL ACHIEVED!</span>
-                    <Sparkles className="h-5 w-5" />
-                  </div>
-                </div>
-              )}
+            const radius = 50;
+            const circumference = 2 * Math.PI * radius;
+            const strokeDashoffset = circumference - (Math.min(progress, 100) / 100) * circumference;
 
-              {/* Goal Header */}
-              <div className={`mb-6 ${isAchieved ? "mt-16" : "mt-0"}`}>
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center space-x-2">
-                    <Target className="h-6 w-6 text-cyan-600 dark:text-cyan-400" />
-                    <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                      {goal.name}
-                    </h3>
-                  </div>
-                </div>
-                {goal.description && (
-                  <p className="text-sm text-gray-600 dark:text-gray-400 ml-8">
-                    {goal.description}
-                  </p>
-                )}
-              </div>
-
-              {/* Progress Circle */}
-              <div className="flex justify-center mb-6">
-                <div className="relative">
-                  <svg
-                    className="transform -rotate-90"
-                    width="120"
-                    height="120"
-                  >
-                    <circle
-                      cx="60"
-                      cy="60"
-                      r="50"
-                      stroke="currentColor"
-                      strokeWidth="8"
-                      fill="none"
-                      className="text-gray-200 dark:text-gray-700"
-                    />
-                    <circle
-                      cx="60"
-                      cy="60"
-                      r="50"
-                      stroke={
-                        isAchieved
-                          ? "url(#achieved-gradient)"
-                          : "url(#progress-gradient)"
-                      }
-                      strokeWidth="8"
-                      fill="none"
-                      strokeDasharray={`${progress * 3.14} 314`}
-                      strokeLinecap="round"
-                      className="transition-all duration-500"
-                    />
-                    <defs>
-                      <linearGradient
-                        id="progress-gradient"
-                        x1="0%"
-                        y1="0%"
-                        x2="100%"
-                        y2="100%"
-                      >
-                        <stop offset="0%" stopColor="#06b6d4" />
-                        <stop offset="100%" stopColor="#3b82f6" />
-                      </linearGradient>
-                      <linearGradient
-                        id="achieved-gradient"
-                        x1="0%"
-                        y1="0%"
-                        x2="100%"
-                        y2="100%"
-                      >
-                        <stop offset="0%" stopColor="#fbbf24" />
-                        <stop offset="100%" stopColor="#f97316" />
-                      </linearGradient>
-                    </defs>
+            return (
+              <div
+                key={goal.id}
+                className="bg-[#eff6ff] dark:bg-blue-900/10 rounded-2xl p-5 border border-blue-100 dark:border-blue-900/50 flex flex-col justify-between shadow-sm relative overflow-hidden transition-all hover:shadow-md"
+              >
+                {/* Background Pattern */}
+                <div className="absolute top-1/4 left-0 right-0 h-1/2 opacity-20 pointer-events-none">
+                  <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <path d="M0,50 Q25,30 50,50 T100,50" fill="none" stroke="#3b82f6" strokeWidth="2" />
+                    <circle cx="25" cy="40" r="1.5" fill="#3b82f6" />
+                    <circle cx="75" cy="60" r="1.5" fill="#3b82f6" />
+                    <circle cx="50" cy="50" r="1.5" fill="#3b82f6" />
                   </svg>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <div
-                        className={`text-3xl font-bold ${
-                          isAchieved
-                            ? "text-orange-600 dark:text-orange-400"
-                            : "text-cyan-600 dark:text-cyan-400"
-                        }`}
-                      >
+                </div>
+
+                <div className="flex justify-between items-start mb-6 relative z-10">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800">
+                      <Target className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                        {goal.name}
+                      </h3>
+                      <span className="inline-block mt-1 px-2.5 py-0.5 bg-blue-200 dark:bg-blue-800 text-blue-700 dark:text-blue-200 text-xs font-semibold rounded-md">
+                        {isAchieved ? "Achieved" : "Active"}
+                      </span>
+                    </div>
+                  </div>
+                  <button className="text-gray-500 hover:text-gray-700 dark:text-gray-400">
+                    <MoreVertical className="h-5 w-5" />
+                  </button>
+                </div>
+
+                {/* Donut Chart Progress */}
+                <div className="flex justify-center mb-6 relative z-10">
+                  <div className="relative w-36 h-36 flex items-center justify-center">
+                    <svg className="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
+                      <circle
+                        cx="60"
+                        cy="60"
+                        r={radius}
+                        stroke="currentColor"
+                        strokeWidth="10"
+                        fill="transparent"
+                        className="text-blue-200 dark:text-blue-900/30"
+                      />
+                      <circle
+                        cx="60"
+                        cy="60"
+                        r={radius}
+                        stroke="currentColor"
+                        strokeWidth="10"
+                        fill="transparent"
+                        strokeDasharray={circumference}
+                        strokeDashoffset={strokeDashoffset}
+                        strokeLinecap="round"
+                        className="text-blue-600 dark:text-blue-500 transition-all duration-1000 ease-out"
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <span className="text-3xl font-bold text-blue-700 dark:text-blue-400">
                         {progress.toFixed(0)}%
-                      </div>
+                      </span>
+                      <span className="text-xs text-blue-600/70 dark:text-blue-400/70 mt-0.5">
+                        of goal achieved
+                      </span>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Amount Details */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 mb-4 space-y-3 shadow-md">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center">
-                    <DollarSign className="h-4 w-4 mr-1" />
-                    Current
-                  </span>
-                  <span className="text-xl font-bold text-cyan-600 dark:text-cyan-400">
-                    ₹{goal.currentAmount.toLocaleString()}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center">
-                    <Target className="h-4 w-4 mr-1" />
-                    Target
-                  </span>
-                  <span className="text-lg font-semibold text-gray-700 dark:text-gray-300">
-                    ₹{goal.targetAmount.toLocaleString()}
-                  </span>
-                </div>
-                <div className="border-t border-gray-200 dark:border-gray-700 pt-3 flex justify-between items-center">
-                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                    Remaining
-                  </span>
-                  <span
-                    className={`text-xl font-bold ${
-                      remaining > 0
-                        ? "text-blue-600 dark:text-blue-400"
-                        : "text-green-600 dark:text-green-400"
-                    }`}
-                  >
-                    ₹{Math.abs(remaining).toLocaleString()}
-                  </span>
-                </div>
-              </div>
-
-              {/* Deadline */}
-              <div className="bg-gradient-to-r from-blue-200 to-cyan-200 dark:from-blue-900/40 dark:to-cyan-900/40 rounded-xl p-3 mb-4 border border-blue-300 dark:border-blue-700">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Calendar className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                    <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                      {daysLeft > 0
-                        ? `${daysLeft} days remaining`
-                        : "Deadline passed"}
+                {/* Amounts Inset Card */}
+                <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 mb-4 relative z-10">
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="text-sm text-gray-500 dark:text-gray-400 font-medium flex items-center gap-2">
+                      <div className="p-1 bg-blue-50 dark:bg-blue-900/30 rounded text-blue-500">
+                        <DollarSign className="h-3.5 w-3.5" />
+                      </div>
+                      Current
+                    </span>
+                    <span className="text-base font-bold text-blue-600 dark:text-blue-400">
+                      ₹{goal.currentAmount.toLocaleString()}
                     </span>
                   </div>
-                  <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="text-sm text-gray-500 dark:text-gray-400 font-medium flex items-center gap-2">
+                      <div className="p-1 bg-purple-50 dark:bg-purple-900/30 rounded text-purple-500">
+                        <Target className="h-3.5 w-3.5" />
+                      </div>
+                      Target
+                    </span>
+                    <span className="text-base font-bold text-gray-900 dark:text-gray-100">
+                      ₹{goal.targetAmount.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="h-px w-full bg-gray-100 dark:bg-gray-700 mb-3"></div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-500 dark:text-gray-400 font-medium flex items-center gap-2">
+                      <div className="p-1 bg-blue-50 dark:bg-blue-900/30 rounded text-blue-500">
+                        <PieChart className="h-3.5 w-3.5" />
+                      </div>
+                      Remaining
+                    </span>
+                    <span className="text-base font-bold text-blue-600 dark:text-blue-400">
+                      ₹{Math.max(0, remaining).toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Date Remaining */}
+                <div className="bg-blue-100 dark:bg-blue-900/40 rounded-xl p-3 mb-5 border border-blue-200 dark:border-blue-800 flex justify-between items-center relative z-10">
+                  <div className="flex items-center gap-2 text-blue-800 dark:text-blue-300">
+                    <Calendar className="h-4 w-4" />
+                    <span className="text-sm font-medium">
+                      {daysLeft > 0 ? `${daysLeft} days remaining` : "Deadline passed"}
+                    </span>
+                  </div>
+                  <span className="text-xs text-blue-700/80 dark:text-blue-300/80 font-medium">
                     {format(new Date(goal.targetDate), "MMM dd, yyyy")}
                   </span>
                 </div>
-              </div>
 
-              {/* Action Buttons */}
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => handleContribute(goal)}
-                  className="flex-1 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white py-3 px-4 rounded-xl font-semibold flex items-center justify-center transition-all hover:scale-105 shadow-md"
-                >
-                  <TrendingUp className="h-4 w-4 mr-2" />
-                  Add Funds
-                </button>
-                <button
-                  onClick={() => handleEdit(goal)}
-                  className="bg-blue-100 hover:bg-blue-200 text-blue-600 dark:bg-blue-900 dark:text-blue-300 py-3 px-4 rounded-xl transition-all hover:scale-105"
-                >
-                  <Edit className="h-5 w-5" />
-                </button>
-                <button
-                  onClick={() => handleDelete(goal.id)}
-                  className="bg-red-100 hover:bg-red-200 text-red-600 dark:bg-red-900 dark:text-red-300 py-3 px-4 rounded-xl transition-all hover:scale-105"
-                >
-                  <Trash2 className="h-5 w-5" />
-                </button>
+                {/* Actions */}
+                <div className="flex gap-2 relative z-10 mt-auto">
+                  <button
+                    onClick={() => handleContribute(goal)}
+                    className="flex-grow bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white py-2.5 rounded-xl font-medium flex items-center justify-center transition shadow-md"
+                  >
+                    <TrendingUp className="h-4 w-4 mr-2" /> Add Funds
+                  </button>
+                  <button
+                    onClick={() => handleEdit(goal)}
+                    className="p-3 bg-white dark:bg-gray-800 border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/50 transition shadow-sm shrink-0"
+                  >
+                    <Edit className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(goal.id)}
+                    className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 text-red-500 dark:text-red-400 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/40 transition shadow-sm shrink-0"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+
+          {goals.length === 0 && (
+            <div className="col-span-1 md:col-span-2 bg-[#eff6ff] dark:bg-blue-900/10 rounded-2xl p-10 border border-blue-100 dark:border-blue-900/50 flex flex-col items-center justify-center text-center shadow-sm">
+              <Trophy className="h-16 w-16 text-blue-400 dark:text-blue-600 mb-4" />
+              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">No Goals Set</h3>
+              <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-md">
+                Dreams without goals are just dreams. Set your first savings goal and start tracking your progress!
+              </p>
+              <button
+                onClick={() => setShowModal(true)}
+                className="bg-blue-600 text-white px-6 py-3 rounded-xl font-medium inline-flex items-center shadow-md hover:bg-blue-700 transition"
+              >
+                <Plus className="h-5 w-5 mr-2" /> Add Your First Goal
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Right Side: Summary & Motivation */}
+        <div className="xl:col-span-1 flex flex-col gap-6">
+          {/* Goal Summary Card */}
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6">Goal Summary</h3>
+            <div className="space-y-5">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 bg-blue-50 dark:bg-blue-900/30 rounded-xl text-blue-500">
+                    <Wallet className="h-5 w-5" />
+                  </div>
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Saved</span>
+                </div>
+                <span className="text-lg font-bold text-blue-600 dark:text-blue-400">₹{totalCurrent.toLocaleString()}</span>
+              </div>
+              
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 bg-purple-50 dark:bg-purple-900/30 rounded-xl text-purple-500">
+                    <Target className="h-5 w-5" />
+                  </div>
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Target Amount</span>
+                </div>
+                <span className="text-lg font-bold text-gray-900 dark:text-gray-100">₹{totalTarget.toLocaleString()}</span>
+              </div>
+              
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 bg-green-50 dark:bg-green-900/30 rounded-xl text-green-500">
+                    <PieChart className="h-5 w-5" />
+                  </div>
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Progress</span>
+                </div>
+                <span className="text-lg font-bold text-blue-600 dark:text-blue-400">{globalProgress.toFixed(0)}%</span>
               </div>
             </div>
-          );
-        })}
+          </div>
+
+          {/* Motivational Card */}
+          <div className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 rounded-2xl p-6 shadow-sm border border-indigo-100 dark:border-indigo-900/50 relative overflow-hidden flex-1 min-h-[250px]">
+            <div className="relative z-10">
+              <h3 className="text-lg font-bold text-indigo-900 dark:text-indigo-200 mb-2 flex items-center gap-2">
+                Keep Going! <span className="text-xl">💪</span>
+              </h3>
+              <p className="text-sm text-indigo-700/80 dark:text-indigo-300/80 leading-relaxed max-w-[80%]">
+                You're making great progress towards your goal. Stay consistent and achieve your dreams!
+              </p>
+            </div>
+            
+            {/* SVG Mountain Illustration */}
+            <div className="absolute bottom-0 right-0 w-full h-3/4 pointer-events-none">
+               <svg viewBox="0 0 200 150" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full absolute bottom-0 right-[-10%]">
+                  <path d="M180 150 L120 40 L60 150 Z" fill="#6366f1" opacity="0.8"/>
+                  <path d="M120 150 L80 80 L30 150 Z" fill="#818cf8" opacity="0.6"/>
+                  <path d="M120 40 L135 45 L135 20 L155 30 L135 40 Z" fill="#4f46e5" />
+                  <circle cx="160" cy="50" r="10" fill="#e0e7ff" opacity="0.5" />
+                  <circle cx="40" cy="80" r="6" fill="#e0e7ff" opacity="0.5" />
+               </svg>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {goals.length === 0 && (
-        <div className="rounded-lg p-6 text-center py-16 bg-gradient-to-br from-cyan-100 to-blue-100 dark:from-cyan-900/20 dark:to-blue-900/20 border-2 border-cyan-300 dark:border-cyan-700 shadow-lg">
-          <Trophy className="h-24 w-24 mx-auto text-cyan-500 dark:text-cyan-600 mb-6" />
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
-            No Savings Goals Yet
-          </h3>
-          <p className="text-lg text-gray-600 dark:text-gray-400 mb-6">
-            Start saving for your dreams! Create your first goal to start
-            saving!
-          </p>
-        </div>
-      )}
-
-      {/* Goal Modal */}
+      {/* Add Goal Modal */}
       <Modal
         isOpen={showModal}
         onClose={handleCloseModal}
@@ -400,10 +439,8 @@ export default function SavingsGoals() {
             <input
               type="text"
               value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              className="input-field"
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
               placeholder="e.g., Emergency Fund, Vacation"
               required
             />
@@ -417,14 +454,11 @@ export default function SavingsGoals() {
               <input
                 type="number"
                 value={formData.targetAmount}
-                onChange={(e) =>
-                  setFormData({ ...formData, targetAmount: e.target.value })
-                }
-                className="input-field"
+                onChange={(e) => setFormData({ ...formData, targetAmount: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
                 required
               />
             </div>
-
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Current Amount
@@ -434,10 +468,8 @@ export default function SavingsGoals() {
                 step="0.01"
                 min="0"
                 value={formData.currentAmount}
-                onChange={(e) =>
-                  setFormData({ ...formData, currentAmount: e.target.value })
-                }
-                className="input-field"
+                onChange={(e) => setFormData({ ...formData, currentAmount: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
                 placeholder="0"
               />
             </div>
@@ -450,10 +482,8 @@ export default function SavingsGoals() {
             <input
               type="date"
               value={formData.targetDate}
-              onChange={(e) =>
-                setFormData({ ...formData, targetDate: e.target.value })
-              }
-              className="input-field"
+              onChange={(e) => setFormData({ ...formData, targetDate: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
               min={new Date().toISOString().split("T")[0]}
               required
             />
@@ -465,24 +495,22 @@ export default function SavingsGoals() {
             </label>
             <textarea
               value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-              className="input-field"
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
               rows="3"
               placeholder="Add notes about this goal..."
             />
           </div>
 
-          <div className="flex justify-end space-x-3">
+          <div className="flex justify-end space-x-3 pt-4 border-t border-gray-100 dark:border-gray-700 mt-6">
             <button
               type="button"
               onClick={handleCloseModal}
-              className="btn-secondary"
+              className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition"
             >
               Cancel
             </button>
-            <button type="submit" className="btn-primary">
+            <button type="submit" className="px-6 py-2 bg-[#0f172a] text-white rounded-xl hover:bg-slate-800 transition">
               {editingGoal ? "Update" : "Create"} Goal
             </button>
           </div>
@@ -496,7 +524,7 @@ export default function SavingsGoals() {
         title="Add Contribution"
       >
         <form onSubmit={handleSubmitContribution} className="space-y-4">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-gray-600 dark:text-gray-400 bg-blue-50 dark:bg-blue-900/30 p-3 rounded-lg border border-blue-100 dark:border-blue-800">
             Add money to: <strong>{selectedGoal?.name}</strong>
           </p>
 
@@ -508,21 +536,21 @@ export default function SavingsGoals() {
               type="number"
               value={contributionAmount}
               onChange={(e) => setContributionAmount(e.target.value)}
-              className="input-field"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
               placeholder="Enter amount"
               required
             />
           </div>
 
-          <div className="flex justify-end space-x-3">
+          <div className="flex justify-end space-x-3 pt-4 border-t border-gray-100 dark:border-gray-700 mt-6">
             <button
               type="button"
               onClick={() => setShowContribution(false)}
-              className="btn-secondary"
+              className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition"
             >
               Cancel
             </button>
-            <button type="submit" className="btn-primary">
+            <button type="submit" className="px-6 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition">
               Add Contribution
             </button>
           </div>

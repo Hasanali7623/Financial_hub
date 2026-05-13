@@ -10,6 +10,12 @@ import {
   AlertCircle,
   CheckCircle,
   Wallet,
+  Calendar,
+  Lightbulb,
+  MoreHorizontal,
+  PieChart,
+  Clock,
+  ArrowUpRight
 } from "lucide-react";
 
 export default function Budgets() {
@@ -99,11 +105,17 @@ export default function Budgets() {
     return Math.min((spent / budget) * 100, 100);
   };
 
-  const getProgressColor = (percentage) => {
-    if (percentage >= 90) return "bg-red-600";
-    if (percentage >= 70) return "bg-yellow-600";
-    return "bg-green-600";
-  };
+  // Summary Computations
+  const totalBudgetsCount = budgets.length;
+  const totalBudgetAmount = budgets.reduce((sum, b) => sum + (Number(b.amount) || 0), 0);
+  const totalSpentAmount = budgets.reduce((sum, b) => sum + (Number(b.spentAmount || b.spent) || 0), 0);
+  const totalRemaining = totalBudgetAmount - totalSpentAmount;
+  const totalPercentage = totalBudgetAmount > 0 ? (totalSpentAmount / totalBudgetAmount) * 100 : 0;
+
+  // Donut chart math
+  const radius = 60;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - (Math.min(totalPercentage, 100) / 100) * circumference;
 
   if (loading) {
     return (
@@ -115,190 +127,273 @@ export default function Budgets() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="page-hero">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      {/* Top Header Card */}
+      <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-gray-100 dark:border-gray-700 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 bg-green-50 dark:bg-green-900/30 rounded-2xl flex items-center justify-center border border-green-100 dark:border-green-800 shrink-0">
+            <Wallet className="h-7 w-7 text-green-600 dark:text-green-400" />
+          </div>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold mb-2 flex items-center text-gray-900 dark:text-gray-100">
-              <Wallet className="h-7 w-7 sm:h-8 sm:w-8 mr-3 text-gray-700 dark:text-gray-300" />
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
               Budget Manager
             </h1>
-            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
               Control your spending with smart budget tracking
             </p>
           </div>
-          <button
-            onClick={() => setShowModal(true)}
-            className="btn-primary w-full sm:w-auto"
-          >
-            <Plus className="h-5 w-5 mr-2" />
-            Create Budget
-          </button>
         </div>
+        <button
+          onClick={() => setShowModal(true)}
+          className="w-full md:w-auto px-6 py-3 bg-[#1e293b] text-white rounded-xl font-medium transition hover:bg-slate-800 shadow-sm flex items-center justify-center gap-2"
+        >
+          <Plus className="h-5 w-5" /> Create Budget
+        </button>
       </div>
 
-      {/* Beautiful Budget Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {budgets.map((budget) => {
-          const spentAmount = budget.spentAmount || budget.spent || 0;
-          const percentage = getProgressPercentage(spentAmount, budget.amount);
-          const remaining = budget.amount - spentAmount;
-          const isOverBudget = percentage >= 100;
-          const isWarning = percentage >= 80 && percentage < 100;
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Side: Budget Cards Grid */}
+        <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 h-fit">
+          {budgets.map((budget) => {
+            const spentAmount = budget.spentAmount || budget.spent || 0;
+            const percentage = getProgressPercentage(spentAmount, budget.amount);
+            const remaining = budget.amount - spentAmount;
+            const isOverBudget = percentage >= 100;
+            const isWarning = percentage >= 80 && percentage < 100;
 
-          return (
-            <div
-              key={budget.id}
-              className={`card hover:shadow-2xl transition-all duration-300 hover:scale-105 relative overflow-hidden ${
-                isOverBudget
-                  ? "bg-gradient-to-br from-red-50 to-rose-100 dark:from-red-900/30 dark:to-rose-900/30 border-red-300 dark:border-red-700"
-                  : isWarning
-                    ? "bg-gradient-to-br from-yellow-50 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30 border-yellow-300 dark:border-yellow-700"
-                    : "bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 border-green-300 dark:border-green-700"
-              }`}
-            >
-              {/* Status Badge */}
-              <div className="absolute top-4 right-4">
-                {isOverBudget ? (
-                  <div className="bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center">
-                    <AlertCircle className="h-3 w-3 mr-1" />
-                    Over Budget
+            return (
+              <div
+                key={budget.id}
+                className="bg-[#f0fdf4] dark:bg-green-900/10 rounded-2xl p-5 border border-green-100 dark:border-green-900/50 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow"
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                      <span className="bg-green-100 dark:bg-green-800 p-1 rounded">💵</span> {budget.category}
+                    </h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1 mt-2">
+                      <Calendar className="h-4 w-4" />
+                      {new Date(budget.year, budget.month - 1).toLocaleDateString("default", {
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </p>
                   </div>
-                ) : isWarning ? (
-                  <div className="bg-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center">
-                    <AlertCircle className="h-3 w-3 mr-1" />
-                    Warning
-                  </div>
-                ) : (
-                  <div className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center">
-                    <CheckCircle className="h-3 w-3 mr-1" />
-                    On Track
-                  </div>
-                )}
-              </div>
-
-              {/* Category & Date */}
-              <div className="mb-6 mt-8">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                  💵 {budget.category}
-                </h3>
-                <span className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
-                  📅{" "}
-                  {new Date(budget.year, budget.month - 1).toLocaleDateString(
-                    "default",
-                    { month: "long", year: "numeric" },
+                  {isOverBudget ? (
+                    <span className="bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-sm">
+                      <AlertCircle className="h-3 w-3" /> Over Budget
+                    </span>
+                  ) : isWarning ? (
+                    <span className="bg-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-sm">
+                      <AlertCircle className="h-3 w-3" /> Warning
+                    </span>
+                  ) : (
+                    <span className="bg-[#22c55e] text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-sm">
+                      <CheckCircle className="h-3 w-3" /> On Track
+                    </span>
                   )}
-                </span>
-              </div>
+                </div>
 
-              {/* Amount Display */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 mb-4 shadow-md">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                    Spent
-                  </span>
-                  <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    ₹{spentAmount.toLocaleString()}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                    Budget
-                  </span>
-                  <span className="text-lg font-semibold text-gray-700 dark:text-gray-300">
-                    ₹{budget.amount.toLocaleString()}
-                  </span>
-                </div>
-                <div className="border-t border-gray-200 dark:border-gray-700 mt-2 pt-2 flex justify-between items-center">
-                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                    Remaining
-                  </span>
-                  <span
-                    className={`text-lg font-bold ${
-                      remaining >= 0
-                        ? "text-green-600 dark:text-green-400"
-                        : "text-red-600 dark:text-red-400"
-                    }`}
-                  >
-                    ₹{Math.abs(remaining).toLocaleString()}
-                  </span>
-                </div>
-              </div>
-
-              {/* Progress Bar */}
-              <div className="mb-4">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm font-bold text-gray-700 dark:text-gray-300">
-                    Progress
-                  </span>
-                  <span
-                    className={`text-lg font-bold ${
-                      isOverBudget
-                        ? "text-red-600 dark:text-red-400"
-                        : isWarning
-                          ? "text-yellow-600 dark:text-yellow-400"
-                          : "text-green-600 dark:text-green-400"
-                    }`}
-                  >
-                    {percentage.toFixed(1)}%
-                  </span>
-                </div>
-                <div className="relative w-full bg-gray-300 dark:bg-gray-700 rounded-full h-4 overflow-hidden">
-                  <div
-                    className={`h-4 rounded-full transition-all duration-500 ease-out relative overflow-hidden ${
-                      isOverBudget
-                        ? "bg-gradient-to-r from-red-500 to-red-600"
-                        : isWarning
-                          ? "bg-gradient-to-r from-yellow-500 to-amber-500"
-                          : "bg-gradient-to-r from-green-500 to-emerald-500"
-                    }`}
-                    style={{ width: `${Math.min(percentage, 100)}%` }}
-                  >
-                    <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-50 dark:border-gray-700 mb-5">
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">Spent</span>
+                    <span className="text-lg font-bold text-gray-900 dark:text-gray-100">₹{spentAmount.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">Budget</span>
+                    <span className="text-lg font-bold text-gray-900 dark:text-gray-100">₹{budget.amount.toLocaleString()}</span>
+                  </div>
+                  <div className="h-px w-full bg-gray-100 dark:bg-gray-700 mb-3"></div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">Remaining</span>
+                    <span className={`text-lg font-bold ${remaining >= 0 ? "text-[#16a34a] dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
+                      ₹{Math.abs(remaining).toLocaleString()}
+                    </span>
                   </div>
                 </div>
-              </div>
 
-              {/* Action Buttons */}
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => handleEdit(budget)}
-                  className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-xl font-semibold flex items-center justify-center transition-all hover:scale-105"
-                >
-                  <Edit className="h-4 w-4 mr-2" />
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(budget.id)}
-                  className="flex-1 bg-red-500 hover:bg-red-600 text-white py-3 px-4 rounded-xl font-semibold flex items-center justify-center transition-all hover:scale-105"
-                >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Delete
-                </button>
+                <div className="mb-5">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm font-bold text-gray-800 dark:text-gray-200">Progress</span>
+                    <span className={`text-sm font-bold ${isOverBudget ? "text-red-600" : isWarning ? "text-yellow-600" : "text-[#16a34a]"}`}>
+                      {percentage.toFixed(1)}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-green-200 dark:bg-green-900/50 rounded-full h-3 overflow-hidden">
+                    <div
+                      className={`h-3 rounded-full ${isOverBudget ? "bg-red-600" : isWarning ? "bg-yellow-500" : "bg-[#16a34a]"}`}
+                      style={{ width: `${Math.min(percentage, 100)}%` }}
+                    ></div>
+                  </div>
+                </div>
+
+                <div className="flex gap-3 mt-auto">
+                  <button
+                    onClick={() => handleEdit(budget)}
+                    className="flex-1 bg-[#16a34a] hover:bg-green-700 text-white py-2.5 rounded-xl font-medium flex items-center justify-center transition shadow-sm"
+                  >
+                    <Edit className="h-4 w-4 mr-2" /> Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(budget.id)}
+                    className="flex-1 bg-[#dc2626] hover:bg-red-700 text-white py-2.5 rounded-xl font-medium flex items-center justify-center transition shadow-sm"
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" /> Delete
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+
+          {budgets.length === 0 && (
+            <div className="col-span-1 md:col-span-2 bg-[#f0fdf4] dark:bg-green-900/10 rounded-2xl p-10 border border-green-100 dark:border-green-900/50 flex flex-col items-center justify-center text-center shadow-sm">
+              <Wallet className="h-16 w-16 text-green-300 dark:text-green-700 mb-4" />
+              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">No Budgets Yet</h3>
+              <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-md">
+                Create your first budget to start tracking your spending and reaching your financial goals!
+              </p>
+              <button
+                onClick={() => setShowModal(true)}
+                className="bg-[#16a34a] text-white px-6 py-3 rounded-xl font-medium inline-flex items-center shadow-md hover:bg-green-700 transition"
+              >
+                <Plus className="h-5 w-5 mr-2" /> Create Your First Budget
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Right Side: Insights Card */}
+        <div className="lg:col-span-1 h-fit">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                <Lightbulb className="h-5 w-5 text-yellow-500" />
+                Budget Insights
+              </h2>
+              <button className="text-gray-400 hover:text-gray-600 transition">
+                <MoreHorizontal className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="flex flex-col items-center justify-center mb-8">
+              <div className="relative w-48 h-48 flex items-center justify-center">
+                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 140 140">
+                  {/* Background Circle */}
+                  <circle
+                    cx="70"
+                    cy="70"
+                    r={radius}
+                    stroke="currentColor"
+                    strokeWidth="12"
+                    fill="transparent"
+                    className="text-gray-100 dark:text-gray-700"
+                  />
+                  {/* Progress Circle */}
+                  <circle
+                    cx="70"
+                    cy="70"
+                    r={radius}
+                    stroke="currentColor"
+                    strokeWidth="12"
+                    fill="transparent"
+                    strokeDasharray={circumference}
+                    strokeDashoffset={strokeDashoffset}
+                    strokeLinecap="round"
+                    className={`transition-all duration-1000 ease-out ${
+                      totalPercentage >= 100
+                        ? "text-red-500"
+                        : totalPercentage >= 80
+                        ? "text-yellow-500"
+                        : "text-[#16a34a]"
+                    }`}
+                  />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                    {totalPercentage.toFixed(1)}%
+                  </span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    of budget used
+                  </span>
+                </div>
               </div>
             </div>
-          );
-        })}
+
+            <div className="bg-[#f0fdf4] dark:bg-green-900/20 rounded-xl p-4 border border-green-100 dark:border-green-800/50">
+              <div className="flex items-start gap-3">
+                <div className="p-1.5 bg-green-100 dark:bg-green-800 rounded-lg text-green-600 dark:text-green-300 mt-0.5">
+                  <TrendingUp className="h-4 w-4" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-gray-900 dark:text-gray-100">
+                    {totalPercentage > 100 ? "Over Budget!" : totalPercentage > 80 ? "Nearing Limit!" : "Good Progress!"}
+                  </h4>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 leading-relaxed">
+                    {totalPercentage > 100 
+                      ? "You have exceeded your total budget limit. Time to review expenses." 
+                      : totalPercentage > 80 
+                      ? "You are close to reaching your budget limit for this month." 
+                      : "You're on track to meet your budget goal this month."}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {budgets.length === 0 && (
-        <div className="card text-center py-16 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20">
-          <Wallet className="h-24 w-24 mx-auto text-purple-300 dark:text-purple-600 mb-6" />
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
-            No Budgets Yet
-          </h3>
-          <p className="text-lg text-gray-600 dark:text-gray-400 mb-6">
-            Create your first budget to start tracking your spending!
-          </p>
-          <button
-            onClick={() => setShowModal(true)}
-            className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-3 rounded-xl font-semibold inline-flex items-center shadow-lg hover:shadow-xl transition-all hover:scale-105"
-          >
-            <Plus className="h-5 w-5 mr-2" />
-            Create Your First Budget
-          </button>
+      {/* Bottom Summary Row */}
+      <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 dark:border-gray-700">
+        <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6">
+          Budget Summary
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-green-50 dark:bg-green-900/30 flex items-center justify-center shrink-0">
+              <Wallet className="h-6 w-6 text-[#16a34a] dark:text-green-400" />
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total Budgets</p>
+              <p className="text-xl font-bold text-gray-900 dark:text-gray-100 my-0.5">{totalBudgetsCount}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Active budgets</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center shrink-0">
+              <PieChart className="h-6 w-6 text-blue-500 dark:text-blue-400" />
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total Budget</p>
+              <p className="text-xl font-bold text-gray-900 dark:text-gray-100 my-0.5">₹{totalBudgetAmount.toLocaleString()}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Across all budgets</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center shrink-0">
+              <ArrowUpRight className="h-6 w-6 text-purple-500 dark:text-purple-400" />
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total Spent</p>
+              <p className="text-xl font-bold text-gray-900 dark:text-gray-100 my-0.5">₹{totalSpentAmount.toLocaleString()}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">This month</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-orange-50 dark:bg-orange-900/30 flex items-center justify-center shrink-0">
+              <Clock className="h-6 w-6 text-orange-500 dark:text-orange-400" />
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Remaining</p>
+              <p className={`text-xl font-bold my-0.5 ${totalRemaining >= 0 ? "text-[#16a34a] dark:text-green-400" : "text-red-500 dark:text-red-400"}`}>
+                ₹{Math.abs(totalRemaining).toLocaleString()}
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Total remaining</p>
+            </div>
+          </div>
         </div>
-      )}
+      </div>
 
       {/* Budget Modal */}
       <Modal
@@ -317,7 +412,7 @@ export default function Budgets() {
               onChange={(e) =>
                 setFormData({ ...formData, category: e.target.value })
               }
-              className="input-field"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
               placeholder="e.g., Food, Entertainment"
               required
             />
@@ -334,7 +429,7 @@ export default function Budgets() {
               onChange={(e) =>
                 setFormData({ ...formData, amount: e.target.value })
               }
-              className="input-field"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
               placeholder="Enter budget amount"
               required
             />
@@ -353,7 +448,7 @@ export default function Budgets() {
                     month: parseInt(e.target.value) || 1,
                   })
                 }
-                className="input-field"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-green-500 outline-none bg-white dark:bg-gray-800"
                 required
               >
                 <option value="1">January</option>
@@ -384,7 +479,7 @@ export default function Budgets() {
                     year: parseInt(e.target.value) || new Date().getFullYear(),
                   })
                 }
-                className="input-field"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
                 min="2020"
                 max="2030"
                 required
@@ -405,7 +500,7 @@ export default function Budgets() {
                   alertThreshold: parseInt(e.target.value) || 80,
                 })
               }
-              className="input-field"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
               min="0"
               max="100"
               placeholder="e.g., 80"
@@ -415,15 +510,15 @@ export default function Budgets() {
             </p>
           </div>
 
-          <div className="flex justify-end space-x-3">
+          <div className="flex justify-end space-x-3 pt-4 border-t border-gray-100 dark:border-gray-700 mt-6">
             <button
               type="button"
               onClick={handleCloseModal}
-              className="btn-secondary"
+              className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition"
             >
               Cancel
             </button>
-            <button type="submit" className="btn-primary">
+            <button type="submit" className="px-6 py-2 bg-[#1e293b] text-white rounded-xl hover:bg-slate-800 transition">
               {editingBudget ? "Update" : "Create"} Budget
             </button>
           </div>
