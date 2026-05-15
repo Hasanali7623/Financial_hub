@@ -1,4 +1,4 @@
-spackage com.finance.repository;
+package com.finance.repository;
 
 import com.finance.entity.SavingsGoal;
 import org.springframework.data.jpa.repository.JpaRepository;
