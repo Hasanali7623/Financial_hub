@@ -29,7 +29,7 @@ A modern, responsive React.js frontend for managing personal finances with AI-po
 
 - Node.js (v16 or higher)
 - npm or yarn
-- Backend API running on http://localhost:8080
+- Backend API URL configured via VITE_API_URL in .env
 
 ## 🔧 Installation
 
@@ -100,20 +100,15 @@ frontend/
 - `npm run preview` - Preview production build
 - `npm run lint` - Run ESLint
 
-## 🔗 API Integration
+The frontend connects to the Spring Boot backend using the `VITE_API_URL` environment variable.
 
-The frontend connects to the Spring Boot backend via proxy configuration in `vite.config.js`:
-
-```javascript
-proxy: {
-  '/api': {
-    target: 'http://localhost:8080',
-    changeOrigin: true,
-  }
-}
+1. Create a `.env` file in the frontend directory.
+2. Add your backend URL:
+```env
+VITE_API_URL=https://financial-hub-6a2o.onrender.com
 ```
 
-All API calls are routed through `/api` which proxies to the backend.
+All API calls use this configured URL.
 
 ## 🌐 Pages & Routes
 
@@ -229,7 +224,7 @@ server: {
 
 ### API connection issues
 
-Ensure backend is running on `http://localhost:8080`
+Ensure `VITE_API_URL` in your `.env` file points to a running backend instance.
 
 ### Build errors
 
