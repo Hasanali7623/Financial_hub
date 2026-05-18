@@ -33,10 +33,20 @@ public class BudgetService {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        // Check if budget already exists for this category, month, and year
-        if (budgetRepository.findByUserIdAndCategoryAndMonthAndYear(
-                user.getId(), request.getCategory(), request.getMonth(), request.getYear()).isPresent()) {
-            throw new ResourceAlreadyExistsException("Budget already exists for this category and period");
+        // Upsert: if a budget already exists for this category, month, and year, update it
+        java.util.Optional<Budget> existing = budgetRepository.findByUserIdAndCategoryAndMonthAndYear(
+                user.getId(), request.getCategory(), request.getMonth(), request.getYear());
+
+        if (existing.isPresent()) {
+            Budget budget = existing.get();
+            budget.setAmount(request.getAmount());
+            budget.setAlertThreshold(request.getAlertThreshold());
+            budget.setStartDate(LocalDate.of(request.getYear(), request.getMonth(), 1));
+            budget.setEndDate(budget.getStartDate().plusMonths(1).minusDays(1));
+            recalculateBudgetSpending(budget);
+            Budget updated = budgetRepository.save(budget);
+            log.info("Budget updated (upsert): {} for user: {}", updated.getId(), userEmail);
+            return mapToResponse(updated);
         }
 
         Budget budget = new Budget();
@@ -186,16 +196,18 @@ public class BudgetService {
     }
 
     private void recalculateBudgetSpending(Budget budget) {
-        // Calculate total spent from actual transactions
+        // Calculate total spent from actual transactions using date-range query (PostgreSQL safe)
         LocalDate startDate = LocalDate.of(budget.getYear(), budget.getMonth(), 1);
         LocalDate endDate = startDate.plusMonths(1).minusDays(1);
-        
+
         BigDecimal totalSpent = transactionRepository
-            .findByFilters(budget.getUser().getId(), budget.getCategory(), "EXPENSE", startDate, endDate)
+            .findByUserIdAndCategoryAndTransactionDateBetweenOrderByTransactionDateDesc(
+                budget.getUser().getId(), budget.getCategory(), startDate, endDate)
             .stream()
+            .filter(t -> "EXPENSE".equals(t.getType()))
             .map(com.finance.entity.Transaction::getAmount)
             .reduce(BigDecimal.ZERO, BigDecimal::add);
-        
+
         budget.setSpentAmount(totalSpent);
         budgetRepository.save(budget);
         log.info("Budget {} recalculated: spent = {}", budget.getId(), totalSpent);

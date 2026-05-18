@@ -172,13 +172,18 @@ public class TransactionService {
     }
 
     @Transactional(readOnly = true)
-    public List<TransactionResponse> filterTransactions(String userEmail, String category, String type, 
+    public List<TransactionResponse> filterTransactions(String userEmail, String category, String type,
                                                        LocalDate startDate, LocalDate endDate) {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        return transactionRepository.findByFilters(user.getId(), category, type, startDate, endDate)
+        // Fetch all user transactions and filter in Java to avoid PostgreSQL null-param type issues
+        return transactionRepository.findByUserIdOrderByTransactionDateDesc(user.getId())
                 .stream()
+                .filter(t -> category == null || category.isEmpty() || category.equals(t.getCategory()))
+                .filter(t -> type == null || type.isEmpty() || type.equals(t.getType()))
+                .filter(t -> startDate == null || !t.getTransactionDate().isBefore(startDate))
+                .filter(t -> endDate == null || !t.getTransactionDate().isAfter(endDate))
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }

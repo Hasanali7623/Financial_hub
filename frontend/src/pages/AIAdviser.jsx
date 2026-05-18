@@ -9,10 +9,8 @@ import {
   PiggyBank,
   Target,
 } from "lucide-react";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { askGeminiStream } from "../services/geminiService";
 import api from "../services/api";
-
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || "");
 
 // Quick suggestions for common questions
 const quickSuggestions = [
@@ -120,27 +118,21 @@ export default function AIAdviser() {
           .filter((t) => t.type === "EXPENSE")
           .reduce((sum, t) => sum + t.amount, 0);
 
-        const context = `\n\nUser's Financial Data Context:\n- Total transactions this month: ${
+        const context = `\n\n[SYSTEM NOTE: The following is the user's current financial data. ONLY use or mention this data if it is directly relevant to answering the user's question. If their question is unrelated to their finances, ignore this data completely.]\nFinancial Data:\n- Transactions this month: ${
           monthlyTransactions.length
-        }\n- Total income this month: Rs ${totalIncome.toLocaleString()}\n- Total expenses this month: Rs ${totalExpenses.toLocaleString()}\n- Active budgets: ${
+        }\n- Income this month: Rs ${totalIncome.toLocaleString()}\n- Expenses this month: Rs ${totalExpenses.toLocaleString()}\n- Active budgets: ${
           financialData.budgets.length
         }\n- Savings goals: ${
           financialData.goals.length
-        }\n\nUse this data to provide personalized advice. Answer the user's question directly based on their actual financial data.`;
+        }`;
 
         contextMessage = message + context;
       }
-
-      const model = genAI.getGenerativeModel({
-        model: "gemini-2.5-flash",
-        systemInstruction:
-          "You are a financial adviser with access to the user's financial data. Give SHORT, CONCISE answers (3-5 sentences max). Be direct and to the point. Use the provided financial data to give personalized advice. Only provide essential information without lengthy explanations.",
-      });
-
-      const result = await model.generateContentStream(contextMessage);
+      
+      const stream = await askGeminiStream(contextMessage);
       let fullText = "";
 
-      for await (const chunk of result.stream) {
+      for await (const chunk of stream) {
         const chunkText = chunk.text();
         fullText += chunkText;
 

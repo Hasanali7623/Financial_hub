@@ -23,6 +23,7 @@ export default function Budgets() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingBudget, setEditingBudget] = useState(null);
+  const [formError, setFormError] = useState("");
 
   const [formData, setFormData] = useState({
     category: "",
@@ -49,6 +50,7 @@ export default function Budgets() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormError("");
     try {
       if (editingBudget) {
         await budgetService.update(editingBudget.id, formData);
@@ -59,6 +61,15 @@ export default function Budgets() {
       handleCloseModal();
     } catch (error) {
       console.error("Error saving budget:", error);
+      if (error.response?.status === 409) {
+        setFormError(
+          `A budget for "${formData.category}" already exists for this month and year. Please edit the existing budget or choose a different category/period.`
+        );
+      } else {
+        setFormError(
+          error.response?.data?.message || "Failed to save budget. Please try again."
+        );
+      }
     }
   };
 
@@ -92,6 +103,7 @@ export default function Budgets() {
   const handleCloseModal = () => {
     setShowModal(false);
     setEditingBudget(null);
+    setFormError("");
     setFormData({
       category: "",
       amount: "",
@@ -402,6 +414,12 @@ export default function Budgets() {
         title={editingBudget ? "Edit Budget" : "Create Budget"}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
+          {formError && (
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 rounded-xl px-4 py-3 text-sm flex items-start gap-2">
+              <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+              <span>{formError}</span>
+            </div>
+          )}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Category
