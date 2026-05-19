@@ -70,6 +70,7 @@ public class SecurityConfig {
                 
         // Ensure critical origins are ALWAYS allowed, even if env vars override them
         if (!origins.contains("http://localhost:5173")) origins.add("http://localhost:5173");
+        if (!origins.contains("http://localhost:3000")) origins.add("http://localhost:3000");
         if (!origins.contains("https://financial-hub-1.onrender.com")) origins.add("https://financial-hub-1.onrender.com");
 
         configuration.setAllowedOrigins(origins);
