@@ -63,9 +63,15 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        List<String> origins = Arrays.stream(allowedOrigins.split(","))
+        
+        List<String> origins = new java.util.ArrayList<>(Arrays.stream(allowedOrigins.split(","))
                 .map(String::trim)
-                .toList();
+                .toList());
+                
+        // Ensure critical origins are ALWAYS allowed, even if env vars override them
+        if (!origins.contains("http://localhost:5173")) origins.add("http://localhost:5173");
+        if (!origins.contains("https://financial-hub-1.onrender.com")) origins.add("https://financial-hub-1.onrender.com");
+
         configuration.setAllowedOrigins(origins);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
