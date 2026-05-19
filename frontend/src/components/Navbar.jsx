@@ -42,10 +42,17 @@ export default function Navbar({ onMenuClick }) {
   }, [darkMode]);
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 10);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -78,9 +85,9 @@ export default function Navbar({ onMenuClick }) {
 
             <div className="flex items-center space-x-3">
               <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-gray-800 via-black to-gray-700 rounded-2xl blur-md opacity-40 group-hover:opacity-60 animate-pulse"></div>
-                <div className="relative bg-gradient-to-br from-gray-800 via-black to-gray-700 p-2.5 rounded-2xl shadow-xl group-hover:shadow-2xl group-hover:shadow-black/50 transition-all duration-300 group-hover:scale-110">
-                  <Wallet className="h-6 w-6 text-white drop-shadow-lg" />
+                <div className="absolute inset-0 bg-gradient-to-br from-gray-800 via-black to-gray-700 rounded-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-300"></div>
+                <div className="relative bg-gradient-to-br from-gray-800 via-black to-gray-700 p-2 sm:p-2.5 rounded-xl sm:rounded-2xl shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+                  <Wallet className="h-5 w-5 sm:h-6 sm:w-6 text-white drop-shadow-md" />
                 </div>
               </div>
               <div>
@@ -120,11 +127,11 @@ export default function Navbar({ onMenuClick }) {
                 className="flex items-center space-x-2 px-3 py-2 rounded-xl bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 dark:from-gray-800 dark:via-gray-700 dark:to-gray-600 hover:from-gray-100 hover:via-gray-200 hover:to-gray-100 dark:hover:from-gray-700 dark:hover:to-gray-600 transition-all duration-300 transform hover:scale-105 active:scale-95 border-2 border-gray-200 dark:border-gray-600 hover:border-black dark:hover:border-gray-500 hover:shadow-xl hover:shadow-black/30"
               >
                 <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-br from-gray-800 via-black to-gray-700 rounded-full blur-sm opacity-40 animate-pulse"></div>
-                  <div className="relative h-10 w-10 rounded-full bg-gradient-to-br from-gray-800 via-black to-gray-700 flex items-center justify-center text-white font-extrabold text-lg shadow-xl">
+                  <div className="absolute inset-0 bg-gradient-to-br from-gray-800 via-black to-gray-700 rounded-full opacity-20 shadow-md"></div>
+                  <div className="relative h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-gradient-to-br from-gray-800 via-black to-gray-700 flex items-center justify-center text-white font-bold text-base sm:text-lg shadow-sm">
                     {user?.name?.charAt(0).toUpperCase()}
                   </div>
-                  <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full animate-pulse shadow-lg"></div>
+                  <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
                 </div>
                 <div className="hidden sm:block text-left">
                   <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
@@ -152,17 +159,17 @@ export default function Navbar({ onMenuClick }) {
                   ></div>
 
                   {/* Dropdown */}
-                  <div className="absolute right-0 mt-3 w-[calc(100vw-1rem)] sm:w-80 max-w-sm backdrop-blur-xl bg-white/95 dark:bg-gray-900/95 rounded-2xl shadow-2xl py-2 border-2 border-purple-200 dark:border-purple-500/30 z-20 animate-in fade-in slide-in-from-top-5 duration-200">
+                  <div className="absolute right-0 mt-3 w-[280px] sm:w-80 backdrop-blur-md bg-white/95 dark:bg-gray-900/95 rounded-2xl shadow-xl py-2 border border-purple-200 dark:border-purple-500/30 z-50 animate-in fade-in slide-in-from-top-2 duration-200 origin-top-right">
                     {/* Profile Section */}
-                    <div className="px-4 py-4 border-b-2 border-purple-200 dark:border-purple-500/30 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 dark:from-gray-800 dark:to-gray-700 rounded-t-2xl relative overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-pink-500/10 to-orange-500/10 animate-pulse"></div>
+                    <div className="px-4 py-4 border-b border-purple-200 dark:border-purple-500/30 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 dark:from-gray-800 dark:to-gray-700 rounded-t-2xl relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-pink-500/10 to-orange-500/10"></div>
                       <div className="flex items-center space-x-3 relative z-10">
                         <div className="relative group">
-                          <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-pink-500 to-orange-500 rounded-full blur-md opacity-50 group-hover:opacity-75 animate-pulse"></div>
-                          <div className="relative h-14 w-14 rounded-full bg-gradient-to-br from-purple-600 via-pink-500 to-orange-500 flex items-center justify-center text-white font-extrabold text-xl shadow-2xl ring-4 ring-white dark:ring-gray-800">
+                          <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-pink-500 to-orange-500 rounded-full opacity-30 group-hover:opacity-50 transition-opacity"></div>
+                          <div className="relative h-12 w-12 sm:h-14 sm:w-14 rounded-full bg-gradient-to-br from-purple-600 via-pink-500 to-orange-500 flex items-center justify-center text-white font-extrabold text-lg sm:text-xl shadow-md ring-2 ring-white dark:ring-gray-800">
                             {user?.name?.charAt(0).toUpperCase()}
                           </div>
-                          <Sparkles className="absolute -top-1 -right-1 h-6 w-6 text-yellow-400 animate-bounce drop-shadow-lg" />
+                          <Sparkles className="absolute -top-1 -right-1 h-5 w-5 text-yellow-400 drop-shadow-sm" />
                         </div>
                         <div className="flex-1">
                           <p className="text-base font-extrabold text-gray-900 dark:text-gray-100">
