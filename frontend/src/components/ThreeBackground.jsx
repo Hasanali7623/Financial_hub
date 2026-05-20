@@ -25,14 +25,16 @@ export default function ThreeBackground() {
     const renderer = new THREE.WebGLRenderer({
       canvas: canvasRef.current,
       alpha: true,
-      antialias: true,
+      antialias: false, // Turn off antialias for performance boost
     });
     renderer.setClearColor(0x000000, 1);
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    // Hardcode pixelRatio to 1 to drastically improve performance on retina screens
+    renderer.setPixelRatio(1); 
 
     // Create particle sphere
-    const particleCount = 2000;
+    // Reduced particle count for better performance
+    const particleCount = 1000;
     const geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
     const originalPositions = new Float32Array(particleCount * 3);
@@ -76,7 +78,7 @@ export default function ThreeBackground() {
 
     // Particle material with glow effect
     const material = new THREE.PointsMaterial({
-      size: 0.15,
+      size: 0.25, // Slightly larger to compensate for fewer particles
       transparent: true,
       opacity: 0.8,
       blending: THREE.AdditiveBlending,
