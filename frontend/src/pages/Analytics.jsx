@@ -124,13 +124,7 @@ export default function Analytics() {
     link.click();
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <LoadingSpinner size="lg" />
-      </div>
-    );
-  }
+
 
   const COLORS = [
     "#ec4899", // pink

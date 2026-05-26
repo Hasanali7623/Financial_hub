@@ -62,13 +62,7 @@ export default function Reports() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <LoadingSpinner size="lg" />
-      </div>
-    );
-  }
+
 
   const filteredTransactions = transactions.filter((t) => {
     const date = new Date(t.transactionDate);

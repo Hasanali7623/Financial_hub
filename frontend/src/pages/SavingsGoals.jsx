@@ -152,13 +152,7 @@ export default function SavingsGoals() {
   const totalTarget = goals.reduce((sum, g) => sum + (Number(g.targetAmount) || 0), 0);
   const globalProgress = totalTarget > 0 ? Math.min((totalCurrent / totalTarget) * 100, 100) : 0;
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <LoadingSpinner size="lg" />
-      </div>
-    );
-  }
+
 
   return (
     <div className="space-y-6">

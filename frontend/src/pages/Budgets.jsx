@@ -129,13 +129,7 @@ export default function Budgets() {
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (Math.min(totalPercentage, 100) / 100) * circumference;
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <LoadingSpinner size="lg" />
-      </div>
-    );
-  }
+
 
   return (
     <div className="space-y-6">
