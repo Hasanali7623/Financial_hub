@@ -22,7 +22,7 @@ export default function AuthDemo() {
         <div
           className={`max-w-4xl w-full text-center transform transition-all duration-1000 ${mounted ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"}`}
         >
-          <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl p-12 border border-white/20">
+          <div className="bg-white/20 backdrop-blur-xl rounded-3xl shadow-2xl p-12 border border-white/30">
             <div className="flex items-center justify-center mb-8">
               <Sparkles className="h-12 w-12 text-yellow-400 mr-4 animate-pulse" />
               <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-600 bg-clip-text text-transparent">
@@ -38,7 +38,7 @@ export default function AuthDemo() {
 
             <div className="grid md:grid-cols-2 gap-8 mb-12">
               {/* Login Demo */}
-              <div className="bg-white/5 backdrop-blur rounded-2xl p-8 border border-white/10 hover:bg-white/10 transition-all duration-300">
+              <div className="bg-white/20 backdrop-blur rounded-2xl p-8 border border-white/30 hover:bg-white/20 transition-all duration-300">
                 <div className="flex items-center justify-center mb-4">
                   <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-4 rounded-full">
                     <Eye className="h-8 w-8 text-white" />
@@ -47,7 +47,7 @@ export default function AuthDemo() {
                 <h3 className="text-2xl font-bold text-white mb-4">
                   Enhanced Login
                 </h3>
-                <p className="text-gray-300 mb-6">
+                <p className="text-gray-500 mb-6">
                   Sophisticated design with floating particles, animated
                   gradients, and smooth transitions.
                 </p>
@@ -61,7 +61,7 @@ export default function AuthDemo() {
               </div>
 
               {/* Register Demo */}
-              <div className="bg-white/5 backdrop-blur rounded-2xl p-8 border border-white/10 hover:bg-white/10 transition-all duration-300">
+              <div className="bg-white/20 backdrop-blur rounded-2xl p-8 border border-white/30 hover:bg-white/20 transition-all duration-300">
                 <div className="flex items-center justify-center mb-4">
                   <div className="bg-gradient-to-r from-purple-500 to-pink-600 p-4 rounded-full">
                     <ExternalLink className="h-8 w-8 text-white" />
@@ -70,7 +70,7 @@ export default function AuthDemo() {
                 <h3 className="text-2xl font-bold text-white mb-4">
                   Enhanced Register
                 </h3>
-                <p className="text-gray-300 mb-6">
+                <p className="text-gray-500 mb-6">
                   Modern signup experience with 3D graphics, premium animations,
                   and professional styling.
                 </p>
@@ -86,31 +86,31 @@ export default function AuthDemo() {
 
             {/* Features List */}
             <div className="grid md:grid-cols-3 gap-6 text-left">
-              <div className="bg-white/5 backdrop-blur rounded-xl p-6 border border-white/10">
+              <div className="bg-white/20 backdrop-blur rounded-xl p-6 border border-white/30">
                 <h4 className="text-lg font-semibold text-white mb-2">
                   🎨 Three.js Animations
                 </h4>
-                <p className="text-gray-300 text-sm">
+                <p className="text-gray-500 text-sm">
                   Interactive 3D particles, floating geometries, and dynamic
                   lighting effects.
                 </p>
               </div>
 
-              <div className="bg-white/5 backdrop-blur rounded-xl p-6 border border-white/10">
+              <div className="bg-white/20 backdrop-blur rounded-xl p-6 border border-white/30">
                 <h4 className="text-lg font-semibold text-white mb-2">
                   ✨ Glassmorphism Design
                 </h4>
-                <p className="text-gray-300 text-sm">
+                <p className="text-gray-500 text-sm">
                   Modern frosted glass effects with backdrop blur and
                   transparency.
                 </p>
               </div>
 
-              <div className="bg-white/5 backdrop-blur rounded-xl p-6 border border-white/10">
+              <div className="bg-white/20 backdrop-blur rounded-xl p-6 border border-white/30">
                 <h4 className="text-lg font-semibold text-white mb-2">
                   🚀 Premium UX
                 </h4>
-                <p className="text-gray-300 text-sm">
+                <p className="text-gray-500 text-sm">
                   Smooth transitions, hover effects, and professional
                   typography.
                 </p>
@@ -120,7 +120,7 @@ export default function AuthDemo() {
             <div className="mt-8 text-center">
               <Link
                 to="/dashboard"
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-600 hover:text-white transition-colors"
               >
                 ← Back to Dashboard
               </Link>

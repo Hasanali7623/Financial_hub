@@ -24,6 +24,7 @@ export default function Budgets() {
   const [showModal, setShowModal] = useState(false);
   const [editingBudget, setEditingBudget] = useState(null);
   const [formError, setFormError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
     category: "",
@@ -51,6 +52,7 @@ export default function Budgets() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormError("");
+    setIsSubmitting(true);
     try {
       if (editingBudget) {
         await budgetService.update(editingBudget.id, formData);
@@ -70,6 +72,8 @@ export default function Budgets() {
           error.response?.data?.message || "Failed to save budget. Please try again."
         );
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -104,6 +108,7 @@ export default function Budgets() {
     setShowModal(false);
     setEditingBudget(null);
     setFormError("");
+    setIsSubmitting(false);
     setFormData({
       category: "",
       amount: "",
@@ -132,27 +137,21 @@ export default function Budgets() {
 
 
   return (
-    <div className="space-y-6">
-      {/* Top Header Card */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-gray-100 dark:border-gray-700 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div className="space-y-6 pb-8">
+      {/* Top Header */}
+      <div className="rounded-2xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+           style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)", boxShadow: "var(--shadow-card)" }}>
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 bg-green-50 dark:bg-green-900/30 rounded-2xl flex items-center justify-center border border-green-100 dark:border-green-800 shrink-0">
-            <Wallet className="h-7 w-7 text-green-600 dark:text-green-400" />
+          <div className="w-12 h-12 bg-emerald-50 dark:bg-emerald-900/30 rounded-2xl flex items-center justify-center border border-emerald-100 dark:border-emerald-800 shrink-0">
+            <Wallet className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              Budget Manager
-            </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              Control your spending with smart budget tracking
-            </p>
+            <h1 className="page-title" style={{ fontSize: "1.375rem" }}>Budget Manager</h1>
+            <p className="page-subtitle">Control your spending with smart budget tracking</p>
           </div>
         </div>
-        <button
-          onClick={() => setShowModal(true)}
-          className="w-full md:w-auto px-6 py-3 bg-[#1e293b] text-white rounded-xl font-medium transition hover:bg-slate-800 shadow-sm flex items-center justify-center gap-2"
-        >
-          <Plus className="h-5 w-5" /> Create Budget
+        <button onClick={() => setShowModal(true)} className="btn-dark w-full md:w-auto flex items-center justify-center gap-2">
+          <Plus className="h-4 w-4" /> Create Budget
         </button>
       </div>
 
@@ -176,7 +175,7 @@ export default function Budgets() {
                     <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                       <span className="bg-green-100 dark:bg-green-800 p-1 rounded">💵</span> {budget.category}
                     </h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1 mt-2">
+                    <p className="text-sm text-gray-700 dark:text-gray-300 flex items-center gap-1 mt-2">
                       <Calendar className="h-4 w-4" />
                       {new Date(budget.year, budget.month - 1).toLocaleDateString("default", {
                         month: "short",
@@ -199,18 +198,18 @@ export default function Budgets() {
                   )}
                 </div>
 
-                <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-50 dark:border-gray-700 mb-5">
+                <div className="bg-white dark:bg-gray-900 rounded-xl p-4 shadow-sm border border-gray-50 dark:border-gray-600 mb-5">
                   <div className="flex justify-between items-center mb-3">
-                    <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">Spent</span>
+                    <span className="text-sm text-gray-700 dark:text-gray-300 font-medium">Spent</span>
                     <span className="text-lg font-bold text-gray-900 dark:text-gray-100">₹{spentAmount.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between items-center mb-3">
-                    <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">Budget</span>
+                    <span className="text-sm text-gray-700 dark:text-gray-300 font-medium">Budget</span>
                     <span className="text-lg font-bold text-gray-900 dark:text-gray-100">₹{budget.amount.toLocaleString()}</span>
                   </div>
                   <div className="h-px w-full bg-gray-100 dark:bg-gray-700 mb-3"></div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">Remaining</span>
+                    <span className="text-sm text-gray-700 dark:text-gray-300 font-medium">Remaining</span>
                     <span className={`text-lg font-bold ${remaining >= 0 ? "text-[#16a34a] dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
                       ₹{Math.abs(remaining).toLocaleString()}
                     </span>
@@ -254,7 +253,7 @@ export default function Budgets() {
             <div className="col-span-1 md:col-span-2 bg-[#f0fdf4] dark:bg-green-900/10 rounded-2xl p-10 border border-green-100 dark:border-green-900/50 flex flex-col items-center justify-center text-center shadow-sm">
               <Wallet className="h-16 w-16 text-green-300 dark:text-green-700 mb-4" />
               <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">No Budgets Yet</h3>
-              <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-md">
+              <p className="text-gray-700 dark:text-gray-300 mb-6 max-w-md">
                 Create your first budget to start tracking your spending and reaching your financial goals!
               </p>
               <button
@@ -269,13 +268,13 @@ export default function Budgets() {
 
         {/* Right Side: Insights Card */}
         <div className="lg:col-span-1 h-fit">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-sm border border-gray-300 dark:border-gray-600">
             <div className="flex justify-between items-center mb-8">
               <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                 <Lightbulb className="h-5 w-5 text-yellow-500" />
                 Budget Insights
               </h2>
-              <button className="text-gray-400 hover:text-gray-600 transition">
+              <button className="text-gray-600 hover:text-gray-600 transition">
                 <MoreHorizontal className="h-5 w-5" />
               </button>
             </div>
@@ -317,7 +316,7 @@ export default function Budgets() {
                   <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                     {totalPercentage.toFixed(1)}%
                   </span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  <span className="text-xs text-gray-700 dark:text-gray-300 mt-1">
                     of budget used
                   </span>
                 </div>
@@ -333,7 +332,7 @@ export default function Budgets() {
                   <h4 className="text-sm font-bold text-gray-900 dark:text-gray-100">
                     {totalPercentage > 100 ? "Over Budget!" : totalPercentage > 80 ? "Nearing Limit!" : "Good Progress!"}
                   </h4>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 leading-relaxed">
+                  <p className="text-xs text-gray-600 dark:text-gray-300 mt-1 leading-relaxed">
                     {totalPercentage > 100 
                       ? "You have exceeded your total budget limit. Time to review expenses." 
                       : totalPercentage > 80 
@@ -348,7 +347,7 @@ export default function Budgets() {
       </div>
 
       {/* Bottom Summary Row */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 dark:border-gray-700">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 md:p-8 shadow-sm border border-gray-300 dark:border-gray-600">
         <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6">
           Budget Summary
         </h3>
@@ -358,9 +357,9 @@ export default function Budgets() {
               <Wallet className="h-6 w-6 text-[#16a34a] dark:text-green-400" />
             </div>
             <div>
-              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total Budgets</p>
+              <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">Total Budgets</p>
               <p className="text-xl font-bold text-gray-900 dark:text-gray-100 my-0.5">{totalBudgetsCount}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Active budgets</p>
+              <p className="text-xs text-gray-700 dark:text-gray-300">Active budgets</p>
             </div>
           </div>
 
@@ -369,9 +368,9 @@ export default function Budgets() {
               <PieChart className="h-6 w-6 text-blue-500 dark:text-blue-400" />
             </div>
             <div>
-              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total Budget</p>
+              <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">Total Budget</p>
               <p className="text-xl font-bold text-gray-900 dark:text-gray-100 my-0.5">₹{totalBudgetAmount.toLocaleString()}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Across all budgets</p>
+              <p className="text-xs text-gray-700 dark:text-gray-300">Across all budgets</p>
             </div>
           </div>
 
@@ -380,9 +379,9 @@ export default function Budgets() {
               <ArrowUpRight className="h-6 w-6 text-purple-500 dark:text-purple-400" />
             </div>
             <div>
-              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total Spent</p>
+              <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">Total Spent</p>
               <p className="text-xl font-bold text-gray-900 dark:text-gray-100 my-0.5">₹{totalSpentAmount.toLocaleString()}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">This month</p>
+              <p className="text-xs text-gray-700 dark:text-gray-300">This month</p>
             </div>
           </div>
 
@@ -391,11 +390,11 @@ export default function Budgets() {
               <Clock className="h-6 w-6 text-orange-500 dark:text-orange-400" />
             </div>
             <div>
-              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Remaining</p>
+              <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">Remaining</p>
               <p className={`text-xl font-bold my-0.5 ${totalRemaining >= 0 ? "text-[#16a34a] dark:text-green-400" : "text-red-500 dark:text-red-400"}`}>
                 ₹{Math.abs(totalRemaining).toLocaleString()}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Total remaining</p>
+              <p className="text-xs text-gray-700 dark:text-gray-300">Total remaining</p>
             </div>
           </div>
         </div>
@@ -460,7 +459,7 @@ export default function Budgets() {
                     month: parseInt(e.target.value) || 1,
                   })
                 }
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-green-500 outline-none bg-white dark:bg-gray-800"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-green-500 outline-none bg-white dark:bg-gray-900"
                 required
               >
                 <option value="1">January</option>
@@ -517,21 +516,15 @@ export default function Budgets() {
               max="100"
               placeholder="e.g., 80"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-700 mt-1">
               Get notified when you reach this percentage of your budget
             </p>
           </div>
 
-          <div className="flex justify-end space-x-3 pt-4 border-t border-gray-100 dark:border-gray-700 mt-6">
-            <button
-              type="button"
-              onClick={handleCloseModal}
-              className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition"
-            >
-              Cancel
-            </button>
-            <button type="submit" className="px-6 py-2 bg-[#1e293b] text-white rounded-xl hover:bg-slate-800 transition">
-              {editingBudget ? "Update" : "Create"} Budget
+          <div className="flex justify-end gap-2.5 pt-4 mt-4" style={{ borderTop: "1px solid var(--color-border)" }}>
+            <button type="button" onClick={handleCloseModal} className="btn-secondary" disabled={isSubmitting}>Cancel</button>
+            <button type="submit" className="btn-dark" disabled={isSubmitting}>
+              {isSubmitting ? "Saving…" : editingBudget ? "Update Budget" : "Create Budget"}
             </button>
           </div>
         </form>

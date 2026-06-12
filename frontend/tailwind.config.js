@@ -4,10 +4,10 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Arial", "Helvetica Neue", "Helvetica", "sans-serif"],
-        serif: ["Arial", "Helvetica Neue", "Helvetica", "sans-serif"],
-        display: ["Arial", "Helvetica Neue", "Helvetica", "sans-serif"],
-        mono: ["Consolas", "Monaco", "Courier New", "monospace"],
+        sans: ["Inter", "system-ui", "-apple-system", "sans-serif"],
+        serif: ["Inter", "system-ui", "-apple-system", "sans-serif"],
+        display: ["Inter", "system-ui", "-apple-system", "sans-serif"],
+        mono: ["JetBrains Mono", "Fira Code", "Consolas", "monospace"],
       },
       animation: {
         'float': 'float 6s ease-in-out infinite',
@@ -16,6 +16,7 @@ export default {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'fade-in': 'fadeIn 0.4s ease-out',
         'slide-in-up': 'slideInUp 0.5s ease-out',
+        'gradient-x': 'gradientX 3s ease infinite',
       },
       keyframes: {
         float: {
@@ -34,20 +35,42 @@ export default {
           '0%': { opacity: '0', transform: 'translateY(16px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
+        gradientX: {
+          '0%, 100%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+        },
       },
       colors: {
         primary: {
-          50: "#eff6ff",
-          100: "#dbeafe",
-          200: "#bfdbfe",
-          300: "#93c5fd",
-          400: "#60a5fa",
-          500: "#3b82f6",
-          600: "#2563eb",
-          700: "#1d4ed8",
-          800: "#1e40af",
-          900: "#1e3a8a",
+          50:  "#EEF2FF",
+          100: "#E0E7FF",
+          200: "#C7D2FE",
+          300: "#A5B4FC",
+          400: "#818CF8",
+          500: "#6366F1",
+          600: "#4F46E5",
+          700: "#4338CA",
+          800: "#3730A3",
+          900: "#312E81",
         },
+        surface: {
+          DEFAULT: "#FFFFFF",
+          dark:    "#1E293B",
+        },
+        bg: {
+          DEFAULT: "#F0F4F8",
+          dark:    "#0F172A",
+        },
+      },
+      boxShadow: {
+        'card':     '0 1px 3px 0 rgba(0,0,0,0.06), 0 4px 16px -4px rgba(0,0,0,0.08)',
+        'card-lg':  '0 4px 6px -1px rgba(0,0,0,0.08), 0 10px 30px -8px rgba(0,0,0,0.12)',
+        'modal':    '0 20px 60px -10px rgba(0,0,0,0.25)',
+        'btn':      '0 1px 2px rgba(79,70,229,0.4), 0 4px 12px -2px rgba(79,70,229,0.3)',
+      },
+      borderRadius: {
+        'card': '16px',
+        'btn':  '10px',
       },
     },
   },

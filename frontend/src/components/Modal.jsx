@@ -1,34 +1,49 @@
+import { X } from "lucide-react";
+
 export default function Modal({ isOpen, onClose, title, children }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 modal-backdrop"
+        onClick={onClose}
+      />
+
+      {/* Dialog */}
+      <div
+        className="relative w-full max-w-lg rounded-2xl overflow-hidden animate-fade-in"
+        style={{
+          background: "var(--color-surface)",
+          border: "1px solid var(--color-border)",
+          boxShadow: "0 20px 60px -10px rgba(0,0,0,0.28), 0 4px 16px -4px rgba(0,0,0,0.12)",
+          maxHeight: "90vh",
+          overflowY: "auto",
+        }}
+      >
+        {/* Header */}
         <div
-          className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"
-          onClick={onClose}
-        ></div>
-
-        <span className="hidden sm:inline-block sm:align-middle sm:h-screen">
-          &#8203;
-        </span>
-
-        <div className="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-          <div className="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                {title}
-              </h3>
-              <button
-                onClick={onClose}
-                className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
-              >
-                <span className="text-2xl">&times;</span>
-              </button>
-            </div>
-            {children}
-          </div>
+          className="flex items-center justify-between px-5 py-4"
+          style={{ borderBottom: "1px solid var(--color-border)" }}
+        >
+          <h3
+            className="text-base font-bold tracking-tight"
+            style={{ color: "var(--color-text-primary)" }}
+          >
+            {title}
+          </h3>
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-lg transition-colors hover:bg-slate-100 dark:hover:bg-slate-700 active:scale-95"
+            style={{ color: "var(--color-text-muted)" }}
+          >
+            <X className="h-4 w-4" />
+          </button>
         </div>
+
+        {/* Content */}
+        <div className="px-5 py-5">{children}</div>
       </div>
     </div>
   );

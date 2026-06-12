@@ -181,9 +181,9 @@ export default function NotificationCenter() {
           ></div>
 
           {/* Panel */}
-          <div className="fixed top-20 left-2 right-2 sm:absolute sm:top-auto sm:left-auto sm:right-0 sm:mt-2 sm:w-96 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl z-50 border-2 border-gray-200 dark:border-gray-700 max-h-[75vh] sm:max-h-[600px] flex flex-col">
+          <div className="fixed top-20 left-2 right-2 sm:absolute sm:top-auto sm:left-auto sm:right-0 sm:mt-2 sm:w-96 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl z-50 border-2 border-gray-300 dark:border-gray-600 max-h-[75vh] sm:max-h-[600px] flex flex-col">
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-purple-500 to-pink-500 rounded-t-2xl">
+            <div className="flex items-center justify-between p-4 border-b border-gray-300 dark:border-gray-600 bg-gradient-to-r from-purple-500 to-pink-500 rounded-t-2xl">
               <div className="flex items-center gap-2 text-white">
                 <Bell className="h-5 w-5" />
                 <h3 className="text-lg font-bold">Notifications</h3>
@@ -203,7 +203,7 @@ export default function NotificationCenter() {
 
             {/* Actions */}
             {unreadCount > 0 && (
-              <div className="p-3 border-b border-gray-200 dark:border-gray-700">
+              <div className="p-3 border-b border-gray-300 dark:border-gray-600">
                 <button
                   onClick={markAllAsRead}
                   className="text-sm text-purple-600 dark:text-purple-400 hover:underline font-semibold"
@@ -216,7 +216,7 @@ export default function NotificationCenter() {
             {/* Notifications List */}
             <div className="overflow-y-auto flex-1">
               {notifications.length === 0 ? (
-                <div className="p-8 text-center text-gray-500 dark:text-gray-400">
+                <div className="p-8 text-center text-gray-700 dark:text-gray-300">
                   <Bell className="h-12 w-12 mx-auto mb-3 opacity-50" />
                   <p>No notifications</p>
                 </div>
@@ -226,7 +226,7 @@ export default function NotificationCenter() {
                   return (
                     <div
                       key={notification.id}
-                      className={`p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors ${
+                      className={`p-4 border-b border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors ${
                         !notification.read
                           ? "bg-purple-50/50 dark:bg-purple-900/10"
                           : ""
@@ -265,14 +265,14 @@ export default function NotificationCenter() {
                                 className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
                                 title="Delete"
                               >
-                                <X className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                                <X className="h-4 w-4 text-gray-700 dark:text-gray-300" />
                               </button>
                             </div>
                           </div>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                          <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
                             {notification.message}
                           </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
+                          <p className="text-xs text-gray-700 dark:text-gray-300 mt-2">
                             {notification.time}
                           </p>
                         </div>
@@ -285,7 +285,7 @@ export default function NotificationCenter() {
 
             {/* Footer */}
             {notifications.length > 0 && (
-              <div className="p-3 border-t border-gray-200 dark:border-gray-700 text-center">
+              <div className="p-3 border-t border-gray-300 dark:border-gray-600 text-center">
                 <button className="text-sm text-purple-600 dark:text-purple-400 hover:underline font-semibold">
                   View all notifications
                 </button>

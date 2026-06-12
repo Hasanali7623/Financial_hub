@@ -138,42 +138,41 @@ export default function Analytics() {
   const totalCategoryValue = categoryData.reduce((acc, curr) => acc + curr.value, 0);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-8">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-gray-100 dark:border-gray-700 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="rounded-2xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+           style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)", boxShadow: "var(--shadow-card)" }}>
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-gray-50 dark:bg-gray-700 rounded-xl flex items-center justify-center border border-gray-100 dark:border-gray-600 shrink-0">
-            <BarChart3 className="h-6 w-6 text-gray-700 dark:text-gray-300" />
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+               style={{ background: "var(--color-bg)", border: "1px solid var(--color-border)" }}>
+            <BarChart3 className="h-5 w-5" style={{ color: "var(--color-text-secondary)" }} />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              Advanced Analytics
-            </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              Deep insights into your financial patterns and trends
-            </p>
+            <h1 className="page-title" style={{ fontSize: "1.375rem" }}>Advanced Analytics</h1>
+            <p className="page-subtitle">Deep insights into your financial patterns and trends</p>
           </div>
         </div>
-        <button
-          onClick={exportData}
-          className="w-full md:w-auto px-5 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded-xl font-medium transition hover:bg-gray-50 dark:hover:bg-gray-700 shadow-sm flex items-center justify-center gap-2"
-        >
+        <button onClick={exportData} className="btn-secondary w-full md:w-auto flex items-center justify-center gap-2">
           <Download className="h-4 w-4" /> Export Data
         </button>
       </div>
 
       {/* Time Range Selector */}
       <div className="flex items-center">
-        <div className="inline-flex bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-1 shadow-sm">
+        <div className="inline-flex rounded-xl p-1" style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)", boxShadow: "var(--shadow-card)" }}>
           {["week", "month", "year"].map((range) => (
             <button
               key={range}
               onClick={() => setTimeRange(range)}
-              className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all ${
+              className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${
                 timeRange === range
-                  ? "bg-[#0f172a] text-white shadow-sm"
-                  : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+                  ? "shadow-sm text-white"
+                  : "hover:bg-slate-100 dark:hover:bg-slate-800"
               }`}
+              style={timeRange === range
+                ? { background: "#0F172A", color: "#fff" }
+                : { color: "var(--color-text-secondary)" }
+              }
             >
               {range.charAt(0).toUpperCase() + range.slice(1)}
             </button>
@@ -183,10 +182,10 @@ export default function Analytics() {
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 relative overflow-hidden">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 shadow-sm border border-gray-300 dark:border-gray-600 relative overflow-hidden">
           <div className="flex justify-between items-start mb-4">
             <div>
-              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Avg Daily Expense</p>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Avg Daily Expense</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">
                 ₹{Math.round(metrics.avgDailyExpense).toLocaleString()}
               </p>
@@ -203,10 +202,10 @@ export default function Analytics() {
           <div className="absolute inset-0 bg-blue-50/30 dark:bg-blue-900/10 pointer-events-none"></div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 relative overflow-hidden">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 shadow-sm border border-gray-300 dark:border-gray-600 relative overflow-hidden">
           <div className="flex justify-between items-start mb-4">
             <div>
-              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Savings Rate</p>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Savings Rate</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">
                 {metrics.savingsRate.toFixed(1)}%
               </p>
@@ -222,10 +221,10 @@ export default function Analytics() {
           <div className="absolute inset-0 bg-green-50/30 dark:bg-green-900/10 pointer-events-none"></div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 relative overflow-hidden">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 shadow-sm border border-gray-300 dark:border-gray-600 relative overflow-hidden">
           <div className="flex justify-between items-start mb-4">
             <div>
-              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Categories</p>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Categories</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">
                 {categoryData.length}
               </p>
@@ -241,10 +240,10 @@ export default function Analytics() {
           <div className="absolute inset-0 bg-orange-50/30 dark:bg-orange-900/10 pointer-events-none"></div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 relative overflow-hidden">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 shadow-sm border border-gray-300 dark:border-gray-600 relative overflow-hidden">
           <div className="flex justify-between items-start mb-4">
             <div>
-              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Transactions</p>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Total Transactions</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">
                 {metrics.totalTransactions}
               </p>
@@ -264,12 +263,12 @@ export default function Analytics() {
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Total Income vs Expenses */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-sm border border-gray-300 dark:border-gray-600">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-purple-600" /> Total Income vs Expenses
             </h3>
-            <button className="text-gray-400 hover:text-gray-600"><MoreVertical className="h-5 w-5" /></button>
+            <button className="text-gray-600 hover:text-gray-600"><MoreVertical className="h-5 w-5" /></button>
           </div>
           
           <div className="h-[250px] relative">
@@ -291,11 +290,14 @@ export default function Analytics() {
                     <Cell fill="#10b981" />
                     <Cell fill="#ef4444" />
                   </Pie>
-                  <Tooltip formatter={(value) => `₹${value.toLocaleString()}`} />
+                  <Tooltip 
+                    formatter={(value) => `₹${value.toLocaleString()}`} 
+                    contentStyle={{ borderRadius: '12px', border: '1px solid var(--color-border)', backgroundColor: 'var(--color-surface)', color: 'var(--color-text-primary)' }}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             ) : (
-               <div className="flex h-full items-center justify-center text-gray-400">No data available</div>
+               <div className="flex h-full items-center justify-center text-gray-600">No data available</div>
             )}
             
             {/* Custom Labels overlapping the chart if needed, or we rely on Tooltips. We will just add the legend below manually to match design */}
@@ -313,12 +315,12 @@ export default function Analytics() {
         </div>
 
         {/* Category-wise Spending (Top Right Donut) */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-sm border border-gray-300 dark:border-gray-600">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
               <PieChartIcon className="h-5 w-5 text-blue-600" /> Category-wise Spending
             </h3>
-            <button className="text-gray-400 hover:text-gray-600"><MoreVertical className="h-5 w-5" /></button>
+            <button className="text-gray-600 hover:text-gray-600"><MoreVertical className="h-5 w-5" /></button>
           </div>
           
           <div className="h-[250px] relative">
@@ -340,7 +342,10 @@ export default function Analytics() {
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(value) => `₹${value.toLocaleString()}`} />
+                    <Tooltip 
+                      formatter={(value) => `₹${value.toLocaleString()}`} 
+                      contentStyle={{ borderRadius: '12px', border: '1px solid var(--color-border)', backgroundColor: 'var(--color-surface)', color: 'var(--color-text-primary)' }}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
                 {/* Center Text for largest category */}
@@ -351,7 +356,7 @@ export default function Analytics() {
                 </div>
               </>
             ) : (
-              <div className="flex h-full items-center justify-center text-gray-400">No data available</div>
+              <div className="flex h-full items-center justify-center text-gray-600">No data available</div>
             )}
           </div>
           
@@ -366,12 +371,12 @@ export default function Analytics() {
         </div>
 
         {/* Top 6 Categories */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-sm border border-gray-300 dark:border-gray-600">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
               <PieChartIcon className="h-5 w-5 text-pink-500" /> Top Categories
             </h3>
-            <button className="text-gray-400 hover:text-gray-600"><MoreVertical className="h-5 w-5" /></button>
+            <button className="text-gray-600 hover:text-gray-600"><MoreVertical className="h-5 w-5" /></button>
           </div>
           
           <div className="flex flex-col sm:flex-row items-center gap-6">
@@ -393,11 +398,14 @@ export default function Analytics() {
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(value) => `₹${value.toLocaleString()}`} />
+                    <Tooltip 
+                      formatter={(value) => `₹${value.toLocaleString()}`} 
+                      contentStyle={{ borderRadius: '12px', border: '1px solid var(--color-border)', backgroundColor: 'var(--color-surface)', color: 'var(--color-text-primary)' }}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="flex h-full items-center justify-center text-gray-400">No data</div>
+                <div className="flex h-full items-center justify-center text-gray-600">No data</div>
               )}
             </div>
             
@@ -410,7 +418,7 @@ export default function Analytics() {
                   </div>
                   <div className="flex items-center gap-4">
                     <span className="font-medium text-gray-900 dark:text-gray-100">₹{cat.value.toLocaleString()}</span>
-                    <span className="text-gray-500 w-8 text-right">{((cat.value / totalCategoryValue) * 100).toFixed(0)}%</span>
+                    <span className="text-gray-700 w-8 text-right">{((cat.value / totalCategoryValue) * 100).toFixed(0)}%</span>
                   </div>
                 </div>
               ))}
@@ -418,19 +426,19 @@ export default function Analytics() {
           </div>
           
           <div className="mt-6 flex justify-center">
-             <button className="px-5 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 transition flex items-center gap-2">
+             <button className="px-5 py-2.5 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 transition flex items-center gap-2">
                 View All Categories <ArrowRight className="h-4 w-4" />
              </button>
           </div>
         </div>
 
         {/* Monthly Expense Distribution */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-sm border border-gray-300 dark:border-gray-600">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
               <Calendar className="h-5 w-5 text-green-500" /> Monthly Expense Distribution
             </h3>
-            <button className="text-gray-400 hover:text-gray-600"><MoreVertical className="h-5 w-5" /></button>
+            <button className="text-gray-600 hover:text-gray-600"><MoreVertical className="h-5 w-5" /></button>
           </div>
           
           <div className="h-[260px] w-full">
@@ -447,19 +455,19 @@ export default function Analytics() {
                     dataKey="month" 
                     axisLine={false} 
                     tickLine={false} 
-                    tick={{ fill: '#6b7280', fontSize: 12 }} 
+                    tick={{ fill: 'var(--color-text-secondary)', fontSize: 12 }} 
                     dy={10}
                     tickFormatter={(val) => val.substring(0,3)}
                   />
                   <YAxis 
                     axisLine={false} 
                     tickLine={false} 
-                    tick={{ fill: '#6b7280', fontSize: 12 }}
+                    tick={{ fill: 'var(--color-text-secondary)', fontSize: 12 }}
                     tickFormatter={(val) => `₹${val/1000}k`}
                   />
-                  <CartesianGrid vertical={false} stroke="#e5e7eb" strokeDasharray="3 3" />
+                  <CartesianGrid vertical={false} stroke="var(--color-border)" strokeDasharray="3 3" />
                   <Tooltip 
-                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                    contentStyle={{ borderRadius: '12px', border: '1px solid var(--color-border)', backgroundColor: 'var(--color-surface)', color: 'var(--color-text-primary)', boxShadow: 'var(--shadow-card)' }}
                     formatter={(value) => [`₹${value.toLocaleString()}`, "Expense"]}
                   />
                   <Area 
@@ -474,7 +482,7 @@ export default function Analytics() {
                 </AreaChart>
               </ResponsiveContainer>
             ) : (
-              <div className="flex h-full items-center justify-center text-gray-400">No trend data available</div>
+              <div className="flex h-full items-center justify-center text-gray-600">No trend data available</div>
             )}
           </div>
         </div>

@@ -1,15 +1,20 @@
 export default function LoadingSpinner({ size = "md" }) {
-  const sizeClasses = {
-    sm: "h-4 w-4",
-    md: "h-8 w-8",
-    lg: "h-12 w-12",
-  };
+  const sizeMap = { sm: "h-5 w-5 border-2", md: "h-9 w-9 border-[3px]", lg: "h-14 w-14 border-4" };
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex flex-col items-center justify-center gap-3">
       <div
-        className={`${sizeClasses[size]} border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin`}
-      ></div>
+        className={`${sizeMap[size]} rounded-full animate-spin`}
+        style={{
+          borderColor: "var(--color-border)",
+          borderTopColor: "#6366F1",
+        }}
+      />
+      {size !== "sm" && (
+        <p className="text-xs font-medium animate-pulse" style={{ color: "var(--color-text-muted)" }}>
+          Loading…
+        </p>
+      )}
     </div>
   );
 }

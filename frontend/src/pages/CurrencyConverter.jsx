@@ -43,13 +43,13 @@ export default function CurrencyConverter() {
     <div className="max-w-3xl mx-auto space-y-6">
       {/* Header */}
       <div className="page-hero text-center">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-600">
           <ArrowRightLeft className="h-8 w-8 text-gray-700 dark:text-gray-300" />
         </div>
         <h1 className="text-3xl sm:text-4xl font-bold mb-2 text-gray-900 dark:text-gray-100">
           💱 Currency Converter
         </h1>
-        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
+        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
           Real-time exchange rates for instant currency conversion
         </p>
       </div>
@@ -123,7 +123,7 @@ export default function CurrencyConverter() {
           {result && result.convertedAmount && (
             <div className="relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-green-200 to-teal-200 dark:from-green-900 dark:to-teal-900 blur-2xl opacity-30"></div>
-              <div className="relative bg-gradient-to-br from-green-500 to-teal-600 text-white rounded-2xl p-8 text-center shadow-2xl border-4 border-white/20">
+              <div className="relative bg-gradient-to-br from-green-500 to-teal-600 text-white rounded-2xl p-8 text-center shadow-2xl border-4 border-white/30">
                 <p className="text-sm font-semibold opacity-90 mb-3">
                   💰 Converted Amount
                 </p>

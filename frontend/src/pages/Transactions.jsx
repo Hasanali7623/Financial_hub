@@ -26,6 +26,8 @@ export default function Transactions() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [showUpload, setShowUpload] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState("");
   const [editingTransaction, setEditingTransaction] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilters, setShowFilters] = useState(false);
@@ -67,6 +69,8 @@ export default function Transactions() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormError("");
+    setIsSubmitting(true);
     try {
       if (editingTransaction) {
         await transactionService.update(editingTransaction.id, formData);
@@ -77,6 +81,9 @@ export default function Transactions() {
       handleCloseModal();
     } catch (error) {
       console.error("Error saving transaction:", error);
+      setFormError(error.response?.data?.message || "Failed to save transaction. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -108,6 +115,8 @@ export default function Transactions() {
   const handleCloseModal = () => {
     setShowModal(false);
     setEditingTransaction(null);
+    setFormError("");
+    setIsSubmitting(false);
     setFormData({
       amount: "",
       category: "",
@@ -208,111 +217,67 @@ export default function Transactions() {
 
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-8">
       {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-            Transactions
-          </h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1">
-            Track, filter, and manage your financial activity
-          </p>
+          <h1 className="page-title">Transactions</h1>
+          <p className="page-subtitle">Track, filter, and manage your financial activity</p>
         </div>
-        <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-          <button
-            onClick={() => setShowModal(true)}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#1e293b] text-white px-5 py-2.5 font-medium transition hover:bg-slate-800 shadow-sm"
-          >
-            <Plus className="h-5 w-5" /> Add Transaction
+        <div className="flex flex-col sm:flex-row gap-2.5">
+          <button onClick={() => setShowModal(true)} className="btn-dark flex items-center gap-2">
+            <Plus className="h-4 w-4" /> Add Transaction
           </button>
-          <button
-            onClick={() => setShowUpload(true)}
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-5 py-2.5 font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition shadow-sm"
-          >
-            <Upload className="h-5 w-5" /> Upload Receipt
+          <button onClick={() => setShowUpload(true)} className="btn-secondary flex items-center gap-2">
+            <Upload className="h-4 w-4" /> Upload Receipt
           </button>
         </div>
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="rounded-2xl border border-green-100 dark:border-green-900/50 bg-green-50/50 dark:bg-green-900/10 p-6 flex justify-between items-center relative overflow-hidden">
-          <div className="z-10">
-            <p className="text-xs font-bold uppercase tracking-wider text-green-600 dark:text-green-400 mb-1">
-              Total Income
-            </p>
-            <p className="text-3xl font-bold text-green-600 dark:text-green-400">
-              ₹{summary.income.toLocaleString()}
-            </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              {summary.incomeCount} entries
-            </p>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {[
+          { label: "Total Income", value: `₹${summary.income.toLocaleString()}`, sub: `${summary.incomeCount} entries`, color: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-50 dark:bg-emerald-900/20", border: "border-emerald-100 dark:border-emerald-900/40", icon: <Wallet className="h-5 w-5 text-emerald-500" /> },
+          { label: "Total Expenses", value: `₹${summary.expense.toLocaleString()}`, sub: `${summary.expenseCount} entries`, color: "text-rose-600 dark:text-rose-400", bg: "bg-rose-50 dark:bg-rose-900/20", border: "border-rose-100 dark:border-rose-900/40", icon: <ArrowDownRight className="h-5 w-5 text-rose-500" /> },
+          { label: "Net Balance", value: `₹${net.toLocaleString()}`, sub: `${filteredTransactions.length} filtered transactions`, color: "text-blue-600 dark:text-blue-400", bg: "bg-blue-50 dark:bg-blue-900/20", border: "border-blue-100 dark:border-blue-900/40", icon: <Wallet className="h-5 w-5 text-blue-500" /> },
+        ].map(({ label, value, sub, color, bg, border, icon }) => (
+          <div key={label} className={`rounded-2xl border ${border} ${bg} p-5 flex justify-between items-center`}>
+            <div>
+              <p className="section-label mb-1.5">{label}</p>
+              <p className={`text-2xl font-extrabold tracking-tight ${color}`}>{value}</p>
+              <p className="text-xs mt-1.5" style={{ color: "var(--color-text-muted)" }}>{sub}</p>
+            </div>
+            <div className="w-11 h-11 rounded-xl bg-white dark:bg-slate-900 flex items-center justify-center shadow-sm border" style={{ borderColor: "var(--color-border)" }}>
+              {icon}
+            </div>
           </div>
-          <div className="w-12 h-12 rounded-full border border-green-200 dark:border-green-800 flex items-center justify-center bg-white dark:bg-gray-800 z-10 shadow-sm">
-            <Wallet className="h-5 w-5 text-green-500" />
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-red-100 dark:border-red-900/50 bg-red-50/50 dark:bg-red-900/10 p-6 flex justify-between items-center relative overflow-hidden">
-          <div className="z-10">
-            <p className="text-xs font-bold uppercase tracking-wider text-red-500 mb-1">
-              Total Expenses
-            </p>
-            <p className="text-3xl font-bold text-red-500">
-              ₹{summary.expense.toLocaleString()}
-            </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              {summary.expenseCount} entries
-            </p>
-          </div>
-          <div className="w-12 h-12 rounded-full border border-red-200 dark:border-red-800 flex items-center justify-center bg-white dark:bg-gray-800 z-10 shadow-sm">
-            <ArrowDownRight className="h-5 w-5 text-red-400" />
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-blue-100 dark:border-blue-900/50 bg-[#f4f7fc] dark:bg-blue-900/10 p-6 flex justify-between items-center relative overflow-hidden">
-          <div className="z-10">
-            <p className="text-xs font-bold uppercase tracking-wider text-blue-500 dark:text-blue-400 mb-1">
-              Net Balance
-            </p>
-            <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-              ₹{net.toLocaleString()}
-            </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              {filteredTransactions.length} filtered transactions
-            </p>
-          </div>
-          <div className="w-12 h-12 rounded-full border border-blue-200 dark:border-blue-800 flex items-center justify-center bg-white dark:bg-gray-800 z-10 shadow-sm">
-            <Wallet className="h-5 w-5 text-blue-500" />
-          </div>
-        </div>
+        ))}
       </div>
 
       {/* Search and Filters */}
-      <div className="flex flex-col md:flex-row gap-4 items-center w-full">
+      <div className="flex flex-col md:flex-row gap-3 items-center w-full">
         <div className="relative flex-1 w-full">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "var(--color-text-muted)" }} />
           <input
             type="text"
-            placeholder="Search by category, description, or merchant"
+            placeholder="Search by category, description, or merchant…"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm text-gray-800 dark:text-gray-200"
+            className="input-field w-full pl-10"
           />
         </div>
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className="w-full md:w-auto px-6 py-3.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl flex items-center justify-center gap-2 text-gray-700 dark:text-gray-200 font-medium hover:bg-gray-50 transition shadow-sm whitespace-nowrap"
+          className={`btn-secondary w-full md:w-auto flex items-center gap-2 ${showFilters ? "ring-2 ring-primary-400" : ""}`}
         >
-          <Settings2 className="h-5 w-5" /> Advanced Filters
+          <Settings2 className="h-4 w-4" /> Advanced Filters
         </button>
       </div>
 
       {showFilters && (
-        <div className="p-5 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="p-5 rounded-2xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)", boxShadow: "var(--shadow-card)" }}>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "var(--color-text-muted)" }}>
               Transaction Type
             </label>
             <select
@@ -402,70 +367,50 @@ export default function Transactions() {
       )}
 
       {/* Transaction List */}
-      <div className="space-y-4">
+      <div className="space-y-3">
         {filteredTransactions.map((transaction) => {
           const isIncome = transaction.type === "INCOME";
           return (
             <div
               key={transaction.id}
-              className={`rounded-2xl border ${
-                isIncome
-                  ? "border-green-100 bg-green-50/50 dark:border-green-900/50 dark:bg-green-900/10"
-                  : "border-red-100 bg-red-50/50 dark:border-red-900/50 dark:bg-red-900/10"
-              } p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-all hover:shadow-sm`}
+              className="rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-all duration-150 hover:shadow-md"
+              style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)", boxShadow: "var(--shadow-card)" }}
             >
               <div className="flex items-center gap-4 w-full md:w-auto">
-                <div
-                  className={`w-10 h-10 rounded-full border flex items-center justify-center bg-white dark:bg-gray-800 ${
-                    isIncome
-                      ? "border-green-500 text-green-600"
-                      : "border-red-500 text-red-500"
-                  }`}
-                >
-                  {isIncome ? <ArrowUpCircle size={20} /> : <ArrowDownCircle size={20} />}
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${isIncome ? "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400" : "bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400"}`}>
+                  {isIncome ? <ArrowUpCircle size={19} /> : <ArrowDownCircle size={19} />}
                 </div>
-                <div>
-                  <div className="flex items-center gap-3">
-                    <p className="font-bold text-gray-900 dark:text-gray-100">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2.5 flex-wrap">
+                    <p className="font-semibold text-sm" style={{ color: "var(--color-text-primary)" }}>
                       {transaction.description || transaction.category}
                     </p>
-                    <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-gray-800 text-white dark:bg-gray-700">
+                    <span className="px-2 py-0.5 text-[11px] font-semibold rounded-full" style={{ background: "var(--color-bg)", color: "var(--color-text-secondary)", border: "1px solid var(--color-border)" }}>
                       {transaction.category}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mt-1.5">
-                    <Calendar size={14} />{" "}
+                  <div className="flex items-center gap-1.5 text-xs mt-1" style={{ color: "var(--color-text-muted)" }}>
+                    <Calendar size={12} />{" "}
                     {format(new Date(transaction.transactionDate), "MMM dd, yyyy")}
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center w-full md:w-auto justify-between md:justify-end gap-6 ml-14 md:ml-0">
+              <div className="flex items-center w-full md:w-auto justify-between md:justify-end gap-4 ml-14 md:ml-0">
                 <div className="text-left md:text-right">
-                  <p
-                    className={`text-lg sm:text-xl font-bold ${
-                      isIncome ? "text-green-600 dark:text-green-400" : "text-red-500 dark:text-red-400"
-                    }`}
-                  >
-                    {isIncome ? "+" : "-"}₹{transaction.amount.toLocaleString()}
+                  <p className={`text-base font-bold ${isIncome ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
+                    {isIncome ? "+" : "−"}₹{transaction.amount.toLocaleString()}
                   </p>
-                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                  <p className="text-[11px] mt-0.5" style={{ color: "var(--color-text-muted)" }}>
                     {isIncome ? "Income" : "Expense"}
                   </p>
                 </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => handleEdit(transaction)}
-                    className="p-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 transition bg-white/50 dark:bg-gray-800"
-                  >
-                    <Edit size={16} />
+                <div className="flex items-center gap-1.5">
+                  <button onClick={() => handleEdit(transaction)} className="p-2 rounded-lg transition-colors hover:bg-slate-100 dark:hover:bg-slate-700" style={{ color: "var(--color-text-secondary)" }} title="Edit">
+                    <Edit size={15} />
                   </button>
-                  <button
-                    onClick={() => handleDelete(transaction.id)}
-                    className="p-2 rounded-lg border border-red-200 dark:border-red-800 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition bg-white/50 dark:bg-gray-800"
-                  >
-                    <Trash2 size={16} />
+                  <button onClick={() => handleDelete(transaction.id)} className="p-2 rounded-lg transition-colors hover:bg-rose-50 dark:hover:bg-rose-900/20 text-rose-500" title="Delete">
+                    <Trash2 size={15} />
                   </button>
                 </div>
               </div>
@@ -473,17 +418,18 @@ export default function Transactions() {
           );
         })}
         {filteredTransactions.length === 0 && (
-          <div className="text-center py-16 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700">
-            <Wallet className="h-12 w-12 mx-auto text-gray-300 dark:text-gray-600 mb-3" />
-            <p className="text-lg font-medium text-gray-500 dark:text-gray-400">
-              No transactions found
-            </p>
+          <div className="text-center py-16 rounded-2xl" style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)" }}>
+            <div className="w-14 h-14 rounded-2xl mx-auto flex items-center justify-center mb-3" style={{ background: "var(--color-bg)" }}>
+              <Wallet className="h-7 w-7" style={{ color: "var(--color-text-muted)" }} />
+            </div>
+            <p className="text-base font-semibold" style={{ color: "var(--color-text-secondary)" }}>No transactions found</p>
+            <p className="text-sm mt-1" style={{ color: "var(--color-text-muted)" }}>Try adjusting your filters or search query</p>
           </div>
         )}
       </div>
 
       {/* Bottom Feature Banner */}
-      <div className="mt-8 rounded-2xl bg-gradient-to-r from-gray-50 to-blue-50 dark:from-gray-800 dark:to-blue-900/20 border border-gray-100 dark:border-gray-700 p-8 flex flex-col md:flex-row items-center justify-between gap-8 shadow-sm">
+      <div className="rounded-2xl p-6" style={{ background: "linear-gradient(135deg, rgba(99,102,241,0.05) 0%, rgba(16,185,129,0.04) 100%)", border: "1px solid var(--color-border)", boxShadow: "var(--shadow-card)" }}>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center text-purple-600 dark:text-purple-400 shrink-0">
@@ -491,7 +437,7 @@ export default function Transactions() {
             </div>
             <div>
               <p className="font-semibold text-gray-900 dark:text-gray-100">Smart Filtering</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              <p className="text-xs text-gray-700 dark:text-gray-300 mt-1">
                 Find transactions instantly with advanced filters
               </p>
             </div>
@@ -502,7 +448,7 @@ export default function Transactions() {
             </div>
             <div>
               <p className="font-semibold text-gray-900 dark:text-gray-100">Easy Management</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              <p className="text-xs text-gray-700 dark:text-gray-300 mt-1">
                 Add, edit, and delete transactions with clicks
               </p>
             </div>
@@ -513,7 +459,7 @@ export default function Transactions() {
             </div>
             <div>
               <p className="font-semibold text-gray-900 dark:text-gray-100">Secure & Private</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              <p className="text-xs text-gray-700 dark:text-gray-300 mt-1">
                 Your financial data is encrypted and protected
               </p>
             </div>
@@ -528,6 +474,11 @@ export default function Transactions() {
         title={editingTransaction ? "Edit Transaction" : "Add Transaction"}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
+          {formError && (
+            <div className="bg-red-50 text-red-600 p-3 rounded-xl text-sm border border-red-100">
+              {formError}
+            </div>
+          )}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -607,7 +558,7 @@ export default function Transactions() {
             />
           </div>
 
-          <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+          <div className="border-t border-gray-300 dark:border-gray-600 pt-4">
             <div className="flex items-center space-x-2 mb-4">
               <input
                 type="checkbox"
@@ -648,12 +599,10 @@ export default function Transactions() {
             )}
           </div>
 
-          <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <button type="button" onClick={handleCloseModal} className="px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition">
-              Cancel
-            </button>
-            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition">
-              {editingTransaction ? "Update" : "Add"} Transaction
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2.5 pt-4" style={{ borderTop: "1px solid var(--color-border)" }}>
+            <button type="button" onClick={handleCloseModal} className="btn-secondary" disabled={isSubmitting}>Cancel</button>
+            <button type="submit" className="btn-primary" disabled={isSubmitting}>
+              {isSubmitting ? "Saving…" : editingTransaction ? "Update Transaction" : "Add Transaction"}
             </button>
           </div>
         </form>
@@ -666,7 +615,7 @@ export default function Transactions() {
         title="Upload Receipt"
       >
         <div className="space-y-4">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-gray-600 dark:text-gray-300">
             Upload a receipt image to automatically extract transaction details using OCR.
           </p>
           <input
@@ -675,8 +624,8 @@ export default function Transactions() {
             onChange={handleFileUpload}
             className="w-full border border-gray-300 dark:border-gray-600 rounded-xl p-2"
           />
-          <div className="flex justify-end gap-3 mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
-            <button onClick={() => setShowUpload(false)} className="px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition">
+          <div className="flex justify-end gap-3 mt-4 border-t border-gray-300 dark:border-gray-600 pt-4">
+            <button onClick={() => setShowUpload(false)} className="px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-100 transition">
               Close
             </button>
           </div>

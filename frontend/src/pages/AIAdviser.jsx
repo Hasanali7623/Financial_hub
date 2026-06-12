@@ -171,24 +171,19 @@ export default function AIAdviser() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="max-w-6xl mx-auto pb-8">
       {/* Header */}
-      <div className="page-hero mb-6">
+      <div className="rounded-2xl p-5 mb-6 flex items-start sm:items-center gap-4"
+           style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)", boxShadow: "var(--shadow-card)" }}>
+        <div className="p-3 rounded-xl shrink-0" style={{ background: "var(--color-bg)", border: "1px solid var(--color-border)" }}>
+          <Brain className="h-7 w-7" style={{ color: "var(--color-text-secondary)" }} />
+        </div>
         <div>
-          <div className="flex items-start sm:items-center gap-3 sm:gap-4 mb-3">
-            <div className="bg-gray-100 dark:bg-gray-800 p-3 sm:p-4 rounded-2xl border border-gray-200 dark:border-gray-700">
-              <Brain className="h-6 w-6 sm:h-8 sm:w-8 text-gray-700 dark:text-gray-200" />
-            </div>
-            <div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100">
-                AI Financial Adviser
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400 mt-1 text-sm sm:text-base flex items-center gap-2">
-                <Sparkles className="h-4 w-4" />
-                Powered by Google Gemini AI
-              </p>
-            </div>
-          </div>
+          <h1 className="page-title">AI Financial Adviser</h1>
+          <p className="page-subtitle flex items-center gap-1.5">
+            <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+            Powered by Google Gemini AI
+          </p>
         </div>
       </div>
 
@@ -219,7 +214,8 @@ export default function AIAdviser() {
       )}
 
       {/* Chat Container */}
-      <div className="backdrop-blur-lg bg-white/80 dark:bg-gray-900/80 rounded-3xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 mb-4 h-[75vh] sm:h-[600px] min-h-[460px] flex flex-col overflow-hidden">
+      <div className="rounded-2xl mb-4 h-[75vh] sm:h-[600px] min-h-[460px] flex flex-col overflow-hidden"
+           style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)", boxShadow: "var(--shadow-card)" }}>
         {/* Messages */}
         <div className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4 sm:space-y-6">
           {messages.map((msg, idx) => (
@@ -237,7 +233,7 @@ export default function AIAdviser() {
                 }`}
               >
                 {msg.role === "assistant" && (
-                  <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-200 dark:border-gray-600">
+                  <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-300 dark:border-gray-600">
                     <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-1.5 rounded-lg">
                       <Sparkles className="h-4 w-4 text-white" />
                     </div>
@@ -307,7 +303,7 @@ export default function AIAdviser() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask me anything about finance..."
-              className="flex-1 px-4 sm:px-5 py-3 sm:py-4 border-2 border-gray-300 dark:border-gray-600 rounded-2xl focus:ring-4 focus:ring-blue-500/50 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-inner transition-all duration-300"
+              className="flex-1 px-4 sm:px-5 py-3 sm:py-4 border-2 border-gray-300 dark:border-gray-600 rounded-2xl focus:ring-4 focus:ring-blue-500/50 focus:border-blue-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 shadow-inner transition-all duration-300"
               disabled={loading}
             />
             <button

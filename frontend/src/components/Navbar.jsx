@@ -20,18 +20,12 @@ export default function Navbar({ onMenuClick }) {
   const [showProfile, setShowProfile] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [darkMode, setDarkMode] = useState(() => {
-    // Check localStorage or system preference
-    if (localStorage.getItem("darkMode") === "true") {
-      return true;
-    }
-    if (localStorage.getItem("darkMode") === "false") {
-      return false;
-    }
+    if (localStorage.getItem("darkMode") === "true") return true;
+    if (localStorage.getItem("darkMode") === "false") return false;
     return window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
 
   useEffect(() => {
-    // Apply dark mode class to html element
     if (darkMode) {
       document.documentElement.classList.add("dark");
       localStorage.setItem("darkMode", "true");
@@ -56,66 +50,80 @@ export default function Navbar({ onMenuClick }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-  };
+  const toggleDarkMode = () => setDarkMode(!darkMode);
 
   return (
     <nav
-      className={`backdrop-blur-lg bg-white/95 dark:bg-gray-900/95 fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled
-          ? "shadow-2xl border-b-2 border-black/20 dark:border-gray-500/30"
-          : "shadow-lg"
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled ? "shadow-lg" : ""
       }`}
+      style={{
+        background: isScrolled
+          ? "rgba(var(--navbar-rgb, 255,255,255), 0.97)"
+          : "var(--color-surface)",
+        borderBottom: `1px solid ${isScrolled ? "rgba(0,0,0,0.08)" : "var(--color-border)"}`,
+        backdropFilter: "blur(12px)",
+      }}
     >
-      {/* Animated gradient accent bar */}
-      <div className="h-1 bg-gradient-to-r from-gray-800 via-black to-gray-700 animate-gradient-x bg-[length:200%_100%]"></div>
+      {/* Accent strip */}
+      <div
+        className="h-0.5"
+        style={{
+          background:
+            "linear-gradient(90deg, #4F46E5 0%, #7C3AED 40%, #EC4899 80%, #F59E0B 100%)",
+        }}
+      />
 
-      <div className="px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Left side */}
-          <div className="flex items-center space-x-4">
+      <div className="px-4 sm:px-6">
+        <div className="flex items-center justify-between h-14">
+
+          {/* Left: hamburger + logo */}
+          <div className="flex items-center gap-3">
             <button
               onClick={onMenuClick}
-              className="md:hidden p-2.5 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gradient-to-br hover:from-gray-800 hover:via-black hover:to-gray-700 hover:text-white transition-all duration-300 transform hover:scale-110 hover:rotate-180 active:scale-95 shadow-lg hover:shadow-black/50"
+              className="md:hidden p-2 rounded-lg transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95"
+              style={{ color: "var(--color-text-secondary)" }}
               aria-label="Toggle menu"
             >
               <Menu className="h-5 w-5" />
             </button>
 
-            <div className="flex items-center space-x-3">
-              <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-gray-800 via-black to-gray-700 rounded-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-300"></div>
-                <div className="relative bg-gradient-to-br from-gray-800 via-black to-gray-700 p-2 sm:p-2.5 rounded-xl sm:rounded-2xl shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-                  <Wallet className="h-5 w-5 sm:h-6 sm:w-6 text-white drop-shadow-md" />
-                </div>
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary-600 to-purple-700 flex items-center justify-center shadow-md">
+                <Wallet className="h-4 w-4 text-white" />
               </div>
-              <div>
-                <h1 className="text-xl font-extrabold bg-gradient-to-r from-gray-800 via-black to-gray-700 dark:from-gray-300 dark:via-white dark:to-gray-300 bg-clip-text text-transparent drop-shadow-sm">
+              <div className="hidden sm:block">
+                <h1
+                  className="text-base font-extrabold tracking-tight"
+                  style={{ color: "var(--color-text-primary)", fontSize: "1rem" }}
+                >
                   FinanceHub
                 </h1>
-                <p className="text-[11px] font-medium text-gray-600 dark:text-gray-400 hidden sm:block tracking-wide">
-                  💎 Smart Money Management
+                <p
+                  className="text-[10px] font-medium leading-none"
+                  style={{ color: "var(--color-text-muted)" }}
+                >
+                  Smart Money Management
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Right side */}
-          <div className="flex items-center space-x-2 sm:space-x-3">
+          {/* Right: actions */}
+          <div className="flex items-center gap-2">
+
             {/* Dark Mode Toggle */}
             <button
               onClick={toggleDarkMode}
-              className="relative p-3 rounded-xl bg-gradient-to-br from-gray-100 to-gray-50 dark:from-gray-800 dark:to-gray-700 hover:from-gray-800 hover:to-black hover:shadow-xl hover:shadow-black/50 transition-all duration-300 transform hover:scale-110 hover:rotate-12 active:scale-95 group border-2 border-gray-200 dark:border-gray-600 hover:border-transparent"
+              className="p-2 rounded-lg transition-all duration-200 hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95"
+              style={{ color: "var(--color-text-secondary)" }}
               title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
             >
-              <div className="relative">
-                {darkMode ? (
-                  <Sun className="h-5 w-5 text-yellow-400 group-hover:text-white transition-all duration-300 drop-shadow-md group-hover:rotate-90" />
-                ) : (
-                  <Moon className="h-5 w-5 text-indigo-600 group-hover:text-white transition-all duration-300 drop-shadow-md group-hover:rotate-12" />
-                )}
-              </div>
+              {darkMode ? (
+                <Sun className="h-4.5 w-4.5 text-amber-500" />
+              ) : (
+                <Moon className="h-4.5 w-4.5" />
+              )}
             </button>
 
             <NotificationCenter />
@@ -124,29 +132,28 @@ export default function Navbar({ onMenuClick }) {
             <div className="relative">
               <button
                 onClick={() => setShowProfile(!showProfile)}
-                className="flex items-center space-x-2 px-3 py-2 rounded-xl bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 dark:from-gray-800 dark:via-gray-700 dark:to-gray-600 hover:from-gray-100 hover:via-gray-200 hover:to-gray-100 dark:hover:from-gray-700 dark:hover:to-gray-600 transition-all duration-300 transform hover:scale-105 active:scale-95 border-2 border-gray-200 dark:border-gray-600 hover:border-black dark:hover:border-gray-500 hover:shadow-xl hover:shadow-black/30"
+                className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl transition-all duration-200 hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95"
+                style={{ border: "1.5px solid var(--color-border)" }}
               >
                 <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-br from-gray-800 via-black to-gray-700 rounded-full opacity-20 shadow-md"></div>
-                  <div className="relative h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-gradient-to-br from-gray-800 via-black to-gray-700 flex items-center justify-center text-white font-bold text-base sm:text-lg shadow-sm">
+                  <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-sm">
                     {user?.name?.charAt(0).toUpperCase()}
                   </div>
-                  <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
+                  <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 bg-emerald-500 border-2 border-white dark:border-slate-900 rounded-full" />
                 </div>
                 <div className="hidden sm:block text-left">
-                  <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
+                  <p className="text-xs font-semibold leading-tight" style={{ color: "var(--color-text-primary)" }}>
                     {user?.name}
                   </p>
-                  <p className="text-xs font-medium bg-gradient-to-r from-gray-800 to-black dark:from-gray-300 dark:to-white bg-clip-text text-transparent">
-                    ✨ Premium User
+                  <p className="text-[10px] leading-tight" style={{ color: "var(--color-text-muted)" }}>
+                    Premium
                   </p>
                 </div>
                 <ChevronDown
-                  className={`h-4 w-4 text-gray-600 dark:text-gray-300 transition-all duration-300 ${
-                    showProfile
-                      ? "rotate-180 text-purple-600 dark:text-purple-400"
-                      : ""
+                  className={`h-3.5 w-3.5 transition-transform duration-200 ${
+                    showProfile ? "rotate-180" : ""
                   }`}
+                  style={{ color: "var(--color-text-muted)" }}
                 />
               </button>
 
@@ -156,64 +163,80 @@ export default function Navbar({ onMenuClick }) {
                   <div
                     className="fixed inset-0 z-10"
                     onClick={() => setShowProfile(false)}
-                  ></div>
+                  />
 
                   {/* Dropdown */}
-                  <div className="absolute right-0 mt-3 w-[280px] sm:w-80 backdrop-blur-md bg-white/95 dark:bg-gray-900/95 rounded-2xl shadow-xl py-2 border border-purple-200 dark:border-purple-500/30 z-50 animate-in fade-in slide-in-from-top-2 duration-200 origin-top-right">
-                    {/* Profile Section */}
-                    <div className="px-4 py-4 border-b border-purple-200 dark:border-purple-500/30 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 dark:from-gray-800 dark:to-gray-700 rounded-t-2xl relative overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-pink-500/10 to-orange-500/10"></div>
-                      <div className="flex items-center space-x-3 relative z-10">
-                        <div className="relative group">
-                          <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-pink-500 to-orange-500 rounded-full opacity-30 group-hover:opacity-50 transition-opacity"></div>
-                          <div className="relative h-12 w-12 sm:h-14 sm:w-14 rounded-full bg-gradient-to-br from-purple-600 via-pink-500 to-orange-500 flex items-center justify-center text-white font-extrabold text-lg sm:text-xl shadow-md ring-2 ring-white dark:ring-gray-800">
+                  <div
+                    className="absolute right-0 mt-2 w-72 rounded-2xl z-50 overflow-hidden animate-fade-in"
+                    style={{
+                      background: "var(--color-surface)",
+                      border: "1px solid var(--color-border)",
+                      boxShadow: "0 10px 40px -8px rgba(0,0,0,0.2), 0 2px 8px -2px rgba(0,0,0,0.1)",
+                    }}
+                  >
+                    {/* Profile Header */}
+                    <div
+                      className="px-4 py-4 relative overflow-hidden"
+                      style={{
+                        background:
+                          "linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(124,58,237,0.05) 100%)",
+                        borderBottom: "1px solid var(--color-border)",
+                      }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="relative">
+                          <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
                             {user?.name?.charAt(0).toUpperCase()}
                           </div>
-                          <Sparkles className="absolute -top-1 -right-1 h-5 w-5 text-yellow-400 drop-shadow-sm" />
+                          <Sparkles className="absolute -top-1 -right-1 h-4 w-4 text-amber-400 drop-shadow" />
                         </div>
-                        <div className="flex-1">
-                          <p className="text-base font-extrabold text-gray-900 dark:text-gray-100">
+                        <div>
+                          <p className="font-bold text-sm" style={{ color: "var(--color-text-primary)" }}>
                             {user?.name}
                           </p>
-                          <p className="text-xs text-gray-600 dark:text-gray-400 truncate font-medium">
+                          <p className="text-xs mt-0.5 truncate max-w-[160px]" style={{ color: "var(--color-text-muted)" }}>
                             {user?.email}
                           </p>
-                          <span className="inline-flex items-center mt-1.5 px-2.5 py-1 text-xs font-bold bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 text-white rounded-full shadow-lg">
-                            <Sparkles className="h-3 w-3 mr-1" />
+                          <span className="inline-flex items-center gap-1 mt-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-primary-600 to-purple-600 text-white">
+                            <Sparkles className="h-2.5 w-2.5" />
                             Premium Member
                           </span>
                         </div>
                       </div>
                     </div>
 
-                    {/* Menu Items */}
-                    <div className="py-2">
+                    {/* Menu items */}
+                    <div className="p-2">
                       <button
                         onClick={() => {
                           setShowProfile(false);
                           navigate("/profile");
                         }}
-                        className="w-full flex items-center px-4 py-3 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-purple-100 hover:via-pink-100 hover:to-orange-100 dark:hover:from-gray-700 dark:hover:to-gray-600 transition-all duration-300 rounded-lg group"
+                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 hover:bg-slate-100 dark:hover:bg-slate-800 group"
+                        style={{ color: "var(--color-text-secondary)" }}
                       >
-                        <div className="h-8 w-8 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mr-3 group-hover:bg-gradient-to-br group-hover:from-purple-500 group-hover:to-pink-500 transition-all duration-300">
-                          <User className="h-4 w-4 text-purple-600 dark:text-purple-400 group-hover:text-white" />
+                        <div className="w-8 h-8 rounded-lg bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center group-hover:bg-primary-100 dark:group-hover:bg-primary-900/50 transition-colors">
+                          <User className="h-4 w-4 text-primary-600 dark:text-primary-400" />
                         </div>
                         My Profile
                       </button>
 
-                      <div className="my-2 h-px bg-gradient-to-r from-transparent via-purple-300 to-transparent dark:via-purple-500/30"></div>
+                      <div
+                        className="my-1.5 mx-2 h-px"
+                        style={{ background: "var(--color-border)" }}
+                      />
 
                       <button
                         onClick={() => {
                           logout();
                           setShowProfile(false);
                         }}
-                        className="w-full flex items-center px-4 py-3 text-sm font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-300 rounded-lg group"
+                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 hover:bg-red-50 dark:hover:bg-red-900/20 group text-red-600 dark:text-red-400"
                       >
-                        <div className="h-8 w-8 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center mr-3 group-hover:bg-red-500 transition-all duration-300">
-                          <LogOut className="h-4 w-4 text-red-600 dark:text-red-400 group-hover:text-white" />
+                        <div className="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-900/30 flex items-center justify-center group-hover:bg-red-100 dark:group-hover:bg-red-900/50 transition-colors">
+                          <LogOut className="h-4 w-4 text-red-500" />
                         </div>
-                        Logout
+                        Sign Out
                       </button>
                     </div>
                   </div>

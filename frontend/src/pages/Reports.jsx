@@ -182,48 +182,45 @@ export default function Reports() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-8">
       {/* Top Header Card */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-gray-100 dark:border-gray-700 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="rounded-2xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+           style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)", boxShadow: "var(--shadow-card)" }}>
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 bg-indigo-50 dark:bg-indigo-900/30 rounded-2xl flex items-center justify-center border border-indigo-100 dark:border-indigo-800 shrink-0">
-            <FileText className="h-7 w-7 text-indigo-600 dark:text-indigo-400" />
+          <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/30 rounded-2xl flex items-center justify-center border border-indigo-100 dark:border-indigo-800 shrink-0">
+            <FileText className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              Financial Reports
-            </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              Generate and export comprehensive financial reports
-            </p>
+            <h1 className="page-title" style={{ fontSize: "1.375rem" }}>Financial Reports</h1>
+            <p className="page-subtitle">Generate and export comprehensive financial reports</p>
           </div>
         </div>
         <div className="relative" ref={exportMenuRef}>
           <button
             onClick={() => setShowExportMenu(!showExportMenu)}
-            className="w-full md:w-auto px-5 py-2.5 bg-white dark:bg-gray-800 border border-indigo-200 dark:border-indigo-800/50 text-indigo-600 dark:text-indigo-400 rounded-xl font-medium transition hover:bg-indigo-50 dark:hover:bg-indigo-900/20 shadow-sm flex items-center justify-center gap-2"
+            className="btn-secondary flex items-center gap-2"
           >
             <Download className="h-4 w-4" /> Export Data <ChevronDown className="h-4 w-4" />
           </button>
-          
           {showExportMenu && (
-             <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden z-20">
-                <button onClick={generatePDFReport} className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-200 flex items-center gap-2">
-                   <FileText className="h-4 w-4" /> Export as PDF
-                </button>
-                <button onClick={exportToCSV} className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-200 flex items-center gap-2">
-                   <FileSpreadsheet className="h-4 w-4" /> Export as CSV
-                </button>
-                <button onClick={exportToJSON} className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-200 flex items-center gap-2">
-                   <FileJson className="h-4 w-4" /> Export as JSON
-                </button>
-             </div>
+            <div className="absolute right-0 mt-2 w-52 rounded-xl overflow-hidden z-20"
+                 style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)", boxShadow: "var(--shadow-modal)" }}>
+              <button onClick={generatePDFReport} className="w-full text-left px-4 py-3 text-sm font-medium flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" style={{ color: "var(--color-text-secondary)" }}>
+                <FileText className="h-4 w-4" /> Export as PDF
+              </button>
+              <button onClick={exportToCSV} className="w-full text-left px-4 py-3 text-sm font-medium flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" style={{ color: "var(--color-text-secondary)" }}>
+                <FileSpreadsheet className="h-4 w-4" /> Export as CSV
+              </button>
+              <button onClick={exportToJSON} className="w-full text-left px-4 py-3 text-sm font-medium flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" style={{ color: "var(--color-text-secondary)" }}>
+                <FileJson className="h-4 w-4" /> Export as JSON
+              </button>
+            </div>
           )}
         </div>
       </div>
 
       {/* Filters Bar */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700">
+      <div className="rounded-2xl p-5" style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)", boxShadow: "var(--shadow-card)" }}>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <div>
             <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-2">
@@ -232,7 +229,7 @@ export default function Reports() {
             <select
               value={reportType}
               onChange={(e) => setReportType(e.target.value)}
-              className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 dark:text-gray-100 text-sm font-medium appearance-none outline-none"
+              className="w-full px-4 py-2.5 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 dark:text-gray-100 text-sm font-medium appearance-none outline-none"
             >
               <option value="summary">Summary Report</option>
               <option value="detailed">Detailed Report</option>
@@ -246,7 +243,7 @@ export default function Reports() {
             <select
               value={month}
               onChange={(e) => setMonth(Number(e.target.value))}
-              className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 dark:text-gray-100 text-sm font-medium appearance-none outline-none"
+              className="w-full px-4 py-2.5 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 dark:text-gray-100 text-sm font-medium appearance-none outline-none"
             >
               {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
                 <option key={m} value={m}>
@@ -262,7 +259,7 @@ export default function Reports() {
             <select
               value={year}
               onChange={(e) => setYear(Number(e.target.value))}
-              className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 dark:text-gray-100 text-sm font-medium appearance-none outline-none"
+              className="w-full px-4 py-2.5 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 dark:text-gray-100 text-sm font-medium appearance-none outline-none"
             >
               {Array.from(
                 { length: new Date().getFullYear() - 2020 + 2 },
@@ -279,13 +276,13 @@ export default function Reports() {
             <div className="flex gap-3">
               <button
                 onClick={exportToCSV}
-                className="flex-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-medium text-sm py-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition flex items-center justify-center gap-2"
+                className="flex-1 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium text-sm py-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition flex items-center justify-center gap-2"
               >
                 <FileSpreadsheet className="h-4 w-4" /> CSV
               </button>
               <button
                 onClick={exportToJSON}
-                className="flex-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-medium text-sm py-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition flex items-center justify-center gap-2"
+                className="flex-1 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium text-sm py-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition flex items-center justify-center gap-2"
               >
                 <FileJson className="h-4 w-4" /> JSON
               </button>
@@ -307,7 +304,7 @@ export default function Reports() {
               <p className="text-3xl font-bold text-[#16a34a] dark:text-green-400 mt-2">
                 ₹{monthlyIncome.toLocaleString()}
               </p>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
                 {incomeTransactions.length} transactions
               </p>
             </div>
@@ -330,7 +327,7 @@ export default function Reports() {
               <p className="text-3xl font-bold text-[#dc2626] dark:text-red-400 mt-2">
                 ₹{monthlyExpense.toLocaleString()}
               </p>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
                 {expenseTransactions.length} transactions
               </p>
             </div>
@@ -353,7 +350,7 @@ export default function Reports() {
               <p className="text-3xl font-bold text-[#2563eb] dark:text-blue-400 mt-2">
                 ₹{netSavings.toLocaleString()}
               </p>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
                 {savingsRate}% savings rate
               </p>
             </div>
@@ -368,8 +365,8 @@ export default function Reports() {
       </div>
 
       {/* Transaction Details Table */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-        <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-300 dark:border-gray-600 overflow-hidden">
+        <div className="p-6 border-b border-gray-300 dark:border-gray-600 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center">
               <List className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
@@ -388,41 +385,41 @@ export default function Reports() {
 
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-100 dark:divide-gray-700">
-            <thead className="bg-gray-50/50 dark:bg-gray-800/50">
+            <thead className="bg-gray-100/50 dark:bg-gray-900/50">
               <tr>
-                <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-widest">
                   Date
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-widest">
                   Description
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-widest">
                   Category
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-widest">
                   Type
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-widest">
                   Amount
                 </th>
                 <th className="px-6 py-4"></th>
               </tr>
             </thead>
-            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700">
+            <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-100 dark:divide-gray-700">
               {filteredTransactions.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="px-6 py-12 text-center">
-                    <p className="text-lg font-semibold text-gray-500 dark:text-gray-400 mb-1">
+                    <p className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-1">
                       No transactions found for {new Date(year, month - 1).toLocaleDateString("en-US", { month: "long", year: "numeric" })}
                     </p>
-                    <p className="text-sm text-gray-400">Try selecting a different month or year</p>
+                    <p className="text-sm text-gray-600">Try selecting a different month or year</p>
                   </td>
                 </tr>
               ) : (
                 filteredTransactions.map((transaction) => {
                   const isIncome = transaction.type === "INCOME";
                   return (
-                    <tr key={transaction.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
+                    <tr key={transaction.id} className="hover:bg-gray-100 dark:hover:bg-gray-700/50 transition">
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-600 dark:text-gray-300">
                         {new Date(transaction.transactionDate).toLocaleDateString("en-US", { day: "numeric", month: "numeric", year: "numeric" })}
                       </td>
@@ -449,7 +446,7 @@ export default function Reports() {
                         ₹{transaction.amount.toLocaleString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right">
-                        <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                        <button className="text-gray-600 hover:text-gray-600 dark:hover:text-gray-200">
                            <MoreVertical className="h-5 w-5" />
                         </button>
                       </td>
@@ -463,12 +460,12 @@ export default function Reports() {
       </div>
 
       {/* Bottom Banner */}
-      <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm relative overflow-hidden">
+      <div className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm relative overflow-hidden">
         <div className="flex items-center gap-4 relative z-10">
           <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center shrink-0">
             <Info className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
           </div>
-          <p className="text-sm font-medium text-gray-600 dark:text-gray-400 leading-relaxed">
+          <p className="text-sm font-medium text-gray-600 dark:text-gray-300 leading-relaxed">
             All reports are generated based on your transactions and budgets.<br className="hidden sm:block"/>Data is secure and confidential.
           </p>
         </div>

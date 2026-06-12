@@ -26,6 +26,8 @@ export default function SavingsGoals() {
   const [editingGoal, setEditingGoal] = useState(null);
   const [selectedGoal, setSelectedGoal] = useState(null);
   const [contributionAmount, setContributionAmount] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState("");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -52,6 +54,8 @@ export default function SavingsGoals() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormError("");
+    setIsSubmitting(true);
     try {
       const goalData = {
         name: formData.name,
@@ -70,10 +74,9 @@ export default function SavingsGoals() {
       handleCloseModal();
     } catch (error) {
       console.error("Error saving goal:", error);
-      alert(
-        error.response?.data?.message ||
-          "Failed to save goal. Please check all fields.",
-      );
+      setFormError(error.response?.data?.message || "Failed to save goal. Please check all fields.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -130,6 +133,8 @@ export default function SavingsGoals() {
   const handleCloseModal = () => {
     setShowModal(false);
     setEditingGoal(null);
+    setFormError("");
+    setIsSubmitting(false);
     setFormData({
       name: "",
       targetAmount: "",
@@ -155,27 +160,21 @@ export default function SavingsGoals() {
 
 
   return (
-    <div className="space-y-6">
-      {/* Top Header Card */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-gray-100 dark:border-gray-700 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div className="space-y-6 pb-8">
+      {/* Top Header */}
+      <div className="rounded-2xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+           style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)", boxShadow: "var(--shadow-card)" }}>
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 bg-blue-50 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center border border-blue-100 dark:border-blue-800 shrink-0">
-            <Trophy className="h-7 w-7 text-blue-600 dark:text-blue-400" />
+          <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center border border-blue-100 dark:border-blue-800 shrink-0">
+            <Trophy className="h-6 w-6 text-blue-600 dark:text-blue-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              Savings Goals
-            </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              ✨ Achieve your dreams with smart savings tracking
-            </p>
+            <h1 className="page-title" style={{ fontSize: "1.375rem" }}>Savings Goals</h1>
+            <p className="page-subtitle">Achieve your dreams with smart savings tracking ✨</p>
           </div>
         </div>
-        <button
-          onClick={() => setShowModal(true)}
-          className="w-full md:w-auto px-6 py-3 bg-[#0f172a] text-white rounded-xl font-medium transition hover:bg-slate-800 shadow-sm flex items-center justify-center gap-2"
-        >
-          <Plus className="h-5 w-5" /> Add Goal
+        <button onClick={() => setShowModal(true)} className="btn-dark w-full md:w-auto flex items-center justify-center gap-2">
+          <Plus className="h-4 w-4" /> Add Goal
         </button>
       </div>
 
@@ -221,7 +220,7 @@ export default function SavingsGoals() {
                       </span>
                     </div>
                   </div>
-                  <button className="text-gray-500 hover:text-gray-700 dark:text-gray-400">
+                  <button className="text-gray-700 hover:text-gray-700 dark:text-gray-300">
                     <MoreVertical className="h-5 w-5" />
                   </button>
                 </div>
@@ -264,9 +263,9 @@ export default function SavingsGoals() {
                 </div>
 
                 {/* Amounts Inset Card */}
-                <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 mb-4 relative z-10">
+                <div className="bg-white dark:bg-gray-900 rounded-xl p-4 shadow-sm border border-gray-300 dark:border-gray-600 mb-4 relative z-10">
                   <div className="flex justify-between items-center mb-3">
-                    <span className="text-sm text-gray-500 dark:text-gray-400 font-medium flex items-center gap-2">
+                    <span className="text-sm text-gray-700 dark:text-gray-300 font-medium flex items-center gap-2">
                       <div className="p-1 bg-blue-50 dark:bg-blue-900/30 rounded text-blue-500">
                         <DollarSign className="h-3.5 w-3.5" />
                       </div>
@@ -277,7 +276,7 @@ export default function SavingsGoals() {
                     </span>
                   </div>
                   <div className="flex justify-between items-center mb-3">
-                    <span className="text-sm text-gray-500 dark:text-gray-400 font-medium flex items-center gap-2">
+                    <span className="text-sm text-gray-700 dark:text-gray-300 font-medium flex items-center gap-2">
                       <div className="p-1 bg-purple-50 dark:bg-purple-900/30 rounded text-purple-500">
                         <Target className="h-3.5 w-3.5" />
                       </div>
@@ -289,7 +288,7 @@ export default function SavingsGoals() {
                   </div>
                   <div className="h-px w-full bg-gray-100 dark:bg-gray-700 mb-3"></div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-500 dark:text-gray-400 font-medium flex items-center gap-2">
+                    <span className="text-sm text-gray-700 dark:text-gray-300 font-medium flex items-center gap-2">
                       <div className="p-1 bg-blue-50 dark:bg-blue-900/30 rounded text-blue-500">
                         <PieChart className="h-3.5 w-3.5" />
                       </div>
@@ -324,7 +323,7 @@ export default function SavingsGoals() {
                   </button>
                   <button
                     onClick={() => handleEdit(goal)}
-                    className="p-3 bg-white dark:bg-gray-800 border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/50 transition shadow-sm shrink-0"
+                    className="p-3 bg-white dark:bg-gray-900 border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/50 transition shadow-sm shrink-0"
                   >
                     <Edit className="h-4 w-4" />
                   </button>
@@ -343,7 +342,7 @@ export default function SavingsGoals() {
             <div className="col-span-1 md:col-span-2 bg-[#eff6ff] dark:bg-blue-900/10 rounded-2xl p-10 border border-blue-100 dark:border-blue-900/50 flex flex-col items-center justify-center text-center shadow-sm">
               <Trophy className="h-16 w-16 text-blue-400 dark:text-blue-600 mb-4" />
               <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">No Goals Set</h3>
-              <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-md">
+              <p className="text-gray-700 dark:text-gray-300 mb-6 max-w-md">
                 Dreams without goals are just dreams. Set your first savings goal and start tracking your progress!
               </p>
               <button
@@ -359,7 +358,7 @@ export default function SavingsGoals() {
         {/* Right Side: Summary & Motivation */}
         <div className="xl:col-span-1 flex flex-col gap-6">
           {/* Goal Summary Card */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-sm border border-gray-300 dark:border-gray-600">
             <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6">Goal Summary</h3>
             <div className="space-y-5">
               <div className="flex justify-between items-center">
@@ -367,7 +366,7 @@ export default function SavingsGoals() {
                   <div className="p-2.5 bg-blue-50 dark:bg-blue-900/30 rounded-xl text-blue-500">
                     <Wallet className="h-5 w-5" />
                   </div>
-                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Saved</span>
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Total Saved</span>
                 </div>
                 <span className="text-lg font-bold text-blue-600 dark:text-blue-400">₹{totalCurrent.toLocaleString()}</span>
               </div>
@@ -377,7 +376,7 @@ export default function SavingsGoals() {
                   <div className="p-2.5 bg-purple-50 dark:bg-purple-900/30 rounded-xl text-purple-500">
                     <Target className="h-5 w-5" />
                   </div>
-                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Target Amount</span>
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Target Amount</span>
                 </div>
                 <span className="text-lg font-bold text-gray-900 dark:text-gray-100">₹{totalTarget.toLocaleString()}</span>
               </div>
@@ -387,7 +386,7 @@ export default function SavingsGoals() {
                   <div className="p-2.5 bg-green-50 dark:bg-green-900/30 rounded-xl text-green-500">
                     <PieChart className="h-5 w-5" />
                   </div>
-                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Progress</span>
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Progress</span>
                 </div>
                 <span className="text-lg font-bold text-blue-600 dark:text-blue-400">{globalProgress.toFixed(0)}%</span>
               </div>
@@ -426,6 +425,11 @@ export default function SavingsGoals() {
         title={editingGoal ? "Edit Goal" : "Add Savings Goal"}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
+          {formError && (
+            <div className="bg-red-50 text-red-600 p-3 rounded-xl text-sm border border-red-100">
+              {formError}
+            </div>
+          )}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Goal Name
@@ -496,16 +500,10 @@ export default function SavingsGoals() {
             />
           </div>
 
-          <div className="flex justify-end space-x-3 pt-4 border-t border-gray-100 dark:border-gray-700 mt-6">
-            <button
-              type="button"
-              onClick={handleCloseModal}
-              className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition"
-            >
-              Cancel
-            </button>
-            <button type="submit" className="px-6 py-2 bg-[#0f172a] text-white rounded-xl hover:bg-slate-800 transition">
-              {editingGoal ? "Update" : "Create"} Goal
+          <div className="flex justify-end gap-2.5 pt-4 mt-4" style={{ borderTop: "1px solid var(--color-border)" }}>
+            <button type="button" onClick={handleCloseModal} className="btn-secondary" disabled={isSubmitting}>Cancel</button>
+            <button type="submit" className="btn-dark" disabled={isSubmitting}>
+              {isSubmitting ? "Saving…" : editingGoal ? "Update Goal" : "Create Goal"}
             </button>
           </div>
         </form>
@@ -518,7 +516,7 @@ export default function SavingsGoals() {
         title="Add Contribution"
       >
         <form onSubmit={handleSubmitContribution} className="space-y-4">
-          <p className="text-sm text-gray-600 dark:text-gray-400 bg-blue-50 dark:bg-blue-900/30 p-3 rounded-lg border border-blue-100 dark:border-blue-800">
+          <p className="text-sm text-gray-600 dark:text-gray-300 bg-blue-50 dark:bg-blue-900/30 p-3 rounded-lg border border-blue-100 dark:border-blue-800">
             Add money to: <strong>{selectedGoal?.name}</strong>
           </p>
 
@@ -536,17 +534,9 @@ export default function SavingsGoals() {
             />
           </div>
 
-          <div className="flex justify-end space-x-3 pt-4 border-t border-gray-100 dark:border-gray-700 mt-6">
-            <button
-              type="button"
-              onClick={() => setShowContribution(false)}
-              className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition"
-            >
-              Cancel
-            </button>
-            <button type="submit" className="px-6 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition">
-              Add Contribution
-            </button>
+          <div className="flex justify-end gap-2.5 pt-4" style={{ borderTop: "1px solid var(--color-border)" }}>
+            <button type="button" onClick={() => setShowContribution(false)} className="btn-secondary">Cancel</button>
+            <button type="submit" className="btn-primary">Add Contribution</button>
           </div>
         </form>
       </Modal>

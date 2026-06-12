@@ -83,9 +83,9 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex bg-gray-50/50 font-sans selection:bg-indigo-100 selection:text-indigo-700">
+    <div className="min-h-screen flex bg-gray-100/50 font-sans selection:bg-indigo-100 selection:text-indigo-700">
       {/* Left Panel - Branding & Illustration */}
-      <div className="hidden lg:flex lg:w-[48%] bg-white relative overflow-hidden flex-col justify-between p-12 border-r border-gray-100">
+      <div className="hidden lg:flex lg:w-[48%] bg-white relative overflow-hidden flex-col justify-between p-12 border-r border-gray-300">
         {/* Background Decorative Elements */}
         <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
           <div className="absolute top-[20%] left-[-10%] w-[500px] h-[500px] bg-indigo-50 rounded-full blur-3xl opacity-60 animate-pulse-slow"></div>
@@ -131,7 +131,7 @@ export default function Register() {
                   {carouselItems[carouselIndex].title}
                 </h3>
               </div>
-              <p className="text-gray-500 text-base leading-relaxed max-w-md">
+              <p className="text-gray-700 text-base leading-relaxed max-w-md">
                 {carouselItems[carouselIndex].description}
               </p>
             </div>
@@ -152,7 +152,7 @@ export default function Register() {
         </div>
 
         {/* Footer Info */}
-        <div className="relative z-10 mt-12 flex items-center justify-between border-t border-gray-100 pt-8 text-xs text-gray-400 font-medium">
+        <div className="relative z-10 mt-12 flex items-center justify-between border-t border-gray-300 pt-8 text-xs text-gray-600 font-medium">
           <div className="flex items-center gap-4">
             <span>Verified Provider</span>
             <span>GDPR Compliant</span>
@@ -166,26 +166,26 @@ export default function Register() {
         <div className="w-full max-w-[460px] animate-slide-in-up my-10">
           <div className="mb-8 text-center lg:text-left">
             <h2 className="text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">Create Account ✨</h2>
-            <p className="text-gray-500 font-medium text-lg">Start your journey to financial freedom today</p>
+            <p className="text-gray-700 font-medium text-lg">Start your journey to financial freedom today</p>
           </div>
 
           <div className="grid grid-cols-2 gap-4 mb-8">
-            <button className="flex justify-center items-center gap-3 px-4 py-3.5 border border-gray-200 rounded-2xl hover:bg-gray-50 transition-all text-sm font-bold text-gray-700 shadow-sm active:scale-[0.98]">
-              <Chrome size={20} className="text-gray-500" />
+            <button className="flex justify-center items-center gap-3 px-4 py-3.5 border border-gray-300 rounded-2xl hover:bg-gray-100 transition-all text-sm font-bold text-gray-700 shadow-sm active:scale-[0.98]">
+              <Chrome size={20} className="text-gray-700" />
               <span>Google</span>
             </button>
-            <button className="flex justify-center items-center gap-3 px-4 py-3.5 border border-gray-200 rounded-2xl hover:bg-gray-50 transition-all text-sm font-bold text-gray-700 shadow-sm active:scale-[0.98]">
-              <Apple size={20} className="text-gray-500" />
+            <button className="flex justify-center items-center gap-3 px-4 py-3.5 border border-gray-300 rounded-2xl hover:bg-gray-100 transition-all text-sm font-bold text-gray-700 shadow-sm active:scale-[0.98]">
+              <Apple size={20} className="text-gray-700" />
               <span>Apple</span>
             </button>
           </div>
 
           <div className="relative mb-8">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-100"></div>
+              <div className="w-full border-t border-gray-300"></div>
             </div>
             <div className="relative flex justify-center text-xs uppercase tracking-widest font-bold">
-              <span className="bg-white px-4 text-gray-400">or sign up with email</span>
+              <span className="bg-white px-4 text-gray-600">or sign up with email</span>
             </div>
           </div>
           
@@ -205,10 +205,10 @@ export default function Register() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Enter your full name"
-                  className="w-full px-5 py-4 rounded-2xl border border-gray-200 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 text-base font-medium placeholder-gray-400 transition-all bg-gray-50/50 focus:bg-white"
+                  className="w-full px-5 py-4 rounded-2xl border border-gray-300 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 text-base font-medium placeholder-gray-400 transition-all bg-gray-100/50 focus:bg-white"
                   required
                 />
-                <div className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-300">
+                <div className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-500">
                   <User size={20} />
                 </div>
               </div>
@@ -222,10 +222,10 @@ export default function Register() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@company.com"
-                  className="w-full px-5 py-4 rounded-2xl border border-gray-200 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 text-base font-medium placeholder-gray-400 transition-all bg-gray-50/50 focus:bg-white"
+                  className="w-full px-5 py-4 rounded-2xl border border-gray-300 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 text-base font-medium placeholder-gray-400 transition-all bg-gray-100/50 focus:bg-white"
                   required
                 />
-                <div className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-300">
+                <div className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-500">
                   <Mail size={20} />
                 </div>
               </div>
@@ -240,13 +240,13 @@ export default function Register() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Create password"
-                    className="w-full px-5 py-4 rounded-2xl border border-gray-200 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 text-base font-medium placeholder-gray-400 transition-all bg-gray-50/50 focus:bg-white"
+                    className="w-full px-5 py-4 rounded-2xl border border-gray-300 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 text-base font-medium placeholder-gray-400 transition-all bg-gray-100/50 focus:bg-white"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none transition-colors"
+                    className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-600 focus:outline-none transition-colors"
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
@@ -277,10 +277,10 @@ export default function Register() {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Repeat password"
-                    className={`w-full px-5 py-4 rounded-2xl border outline-none focus:ring-4 text-base font-medium placeholder-gray-400 transition-all bg-gray-50/50 focus:bg-white ${
+                    className={`w-full px-5 py-4 rounded-2xl border outline-none focus:ring-4 text-base font-medium placeholder-gray-400 transition-all bg-gray-100/50 focus:bg-white ${
                       confirmPassword && password !== confirmPassword 
                         ? 'border-red-200 focus:border-red-400 focus:ring-red-500/10' 
-                        : 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-500/10'
+                        : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500/10'
                     }`}
                     required
                   />
@@ -298,7 +298,7 @@ export default function Register() {
                   </svg>
                 </div>
               </label>
-              <span className="text-sm text-gray-500 font-medium leading-tight">
+              <span className="text-sm text-gray-700 font-medium leading-tight">
                 I agree to the <Link to="#" className="text-indigo-600 font-bold hover:underline">Terms of Service</Link> and <Link to="#" className="text-indigo-600 font-bold hover:underline">Privacy Policy</Link>
               </span>
             </div>
@@ -310,7 +310,7 @@ export default function Register() {
             >
               <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-shimmer"></div>
               {loading ? (
-                <div className="w-7 h-7 border-3 border-white/20 border-t-white rounded-full animate-spin"></div>
+                <div className="w-7 h-7 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
               ) : (
                 <span className="flex items-center gap-2">
                   Create Account <ArrowRight size={20} className="transition-transform group-hover:translate-x-1" />
@@ -320,7 +320,7 @@ export default function Register() {
           </form>
 
           <div className="mt-8 text-center">
-            <p className="text-gray-500 font-medium">
+            <p className="text-gray-700 font-medium">
               Already have an account?{" "}
               <Link to="/login" className="text-indigo-600 font-extrabold hover:text-indigo-700 transition-colors ml-1">
                 Log in instead
