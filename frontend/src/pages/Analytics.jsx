@@ -137,6 +137,14 @@ export default function Analytics() {
 
   const totalCategoryValue = categoryData.reduce((acc, curr) => acc + curr.value, 0);
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 pb-8">
       {/* Header */}
@@ -183,80 +191,91 @@ export default function Analytics() {
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
         <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 shadow-sm border border-gray-300 dark:border-gray-600 relative overflow-hidden">
-          <div className="flex justify-between items-start mb-4">
-            <div>
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Avg Daily Expense</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">
-                ₹{Math.round(metrics.avgDailyExpense).toLocaleString()}
-              </p>
+          {/* Decorative background tint - z-0, behind content */}
+          <div className="absolute inset-0 bg-blue-50/40 dark:bg-blue-900/10 pointer-events-none z-0"></div>
+          <div className="relative z-10">
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Avg Daily Expense</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">
+                  ₹{Math.round(metrics.avgDailyExpense).toLocaleString()}
+                </p>
+              </div>
+              <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center shadow-sm">
+                <DollarSign className="h-5 w-5 text-white" />
+              </div>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center shadow-sm">
-              <DollarSign className="h-5 w-5 text-white" />
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400">
+              <TrendingUp className="h-3.5 w-3.5" />
+              <span>12.5% vs last week</span>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400">
-            <TrendingUp className="h-3.5 w-3.5" />
-            <span>12.5% vs last week</span>
-          </div>
-          {/* Decorative background tint */}
-          <div className="absolute inset-0 bg-blue-50/30 dark:bg-blue-900/10 pointer-events-none"></div>
         </div>
 
         <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 shadow-sm border border-gray-300 dark:border-gray-600 relative overflow-hidden">
-          <div className="flex justify-between items-start mb-4">
-            <div>
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Savings Rate</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">
-                {metrics.savingsRate.toFixed(1)}%
-              </p>
+          {/* Decorative background tint - z-0, behind content */}
+          <div className="absolute inset-0 bg-green-50/40 dark:bg-green-900/10 pointer-events-none z-0"></div>
+          <div className="relative z-10">
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Savings Rate</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">
+                  {metrics.savingsRate.toFixed(1)}%
+                </p>
+              </div>
+              <div className="w-10 h-10 rounded-xl bg-[#22c55e] flex items-center justify-center shadow-sm">
+                <TrendingUp className="h-5 w-5 text-white" />
+              </div>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-[#22c55e] flex items-center justify-center shadow-sm">
-              <TrendingUp className="h-5 w-5 text-white" />
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-[#16a34a] dark:text-green-400">
+              <TrendingUp className="h-3.5 w-3.5" />
+              <span>5.3% vs last week</span>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-[#16a34a] dark:text-green-400">
-            <TrendingUp className="h-3.5 w-3.5" />
-            <span>5.3% vs last week</span>
-          </div>
-          <div className="absolute inset-0 bg-green-50/30 dark:bg-green-900/10 pointer-events-none"></div>
         </div>
 
         <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 shadow-sm border border-gray-300 dark:border-gray-600 relative overflow-hidden">
-          <div className="flex justify-between items-start mb-4">
-            <div>
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Categories</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">
-                {categoryData.length}
-              </p>
+          {/* Decorative background tint - z-0, behind content */}
+          <div className="absolute inset-0 bg-orange-50/40 dark:bg-orange-900/10 pointer-events-none z-0"></div>
+          <div className="relative z-10">
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Categories</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">
+                  {categoryData.length}
+                </p>
+              </div>
+              <div className="w-10 h-10 rounded-xl bg-[#f97316] flex items-center justify-center shadow-sm">
+                <PieChartIcon className="h-5 w-5 text-white" />
+              </div>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-[#f97316] flex items-center justify-center shadow-sm">
-              <PieChartIcon className="h-5 w-5 text-white" />
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-orange-500 dark:text-orange-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
+              <span>No change</span>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-orange-500 dark:text-orange-400">
-            <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
-            <span>No change</span>
-          </div>
-          <div className="absolute inset-0 bg-orange-50/30 dark:bg-orange-900/10 pointer-events-none"></div>
         </div>
 
         <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 shadow-sm border border-gray-300 dark:border-gray-600 relative overflow-hidden">
-          <div className="flex justify-between items-start mb-4">
-            <div>
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Total Transactions</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">
-                {metrics.totalTransactions}
-              </p>
+          {/* Decorative background tint - z-0, behind content */}
+          <div className="absolute inset-0 bg-purple-50/40 dark:bg-purple-900/10 pointer-events-none z-0"></div>
+          <div className="relative z-10">
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Total Transactions</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">
+                  {metrics.totalTransactions}
+                </p>
+              </div>
+              <div className="w-10 h-10 rounded-xl bg-[#a855f7] flex items-center justify-center shadow-sm">
+                <Calendar className="h-5 w-5 text-white" />
+              </div>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-[#a855f7] flex items-center justify-center shadow-sm">
-              <Calendar className="h-5 w-5 text-white" />
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-purple-600 dark:text-purple-400">
+              <TrendingUp className="h-3.5 w-3.5" />
+              <span>2 vs last week</span>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-purple-600 dark:text-purple-400">
-            <TrendingUp className="h-3.5 w-3.5" />
-            <span>2 vs last week</span>
-          </div>
-          <div className="absolute inset-0 bg-purple-50/30 dark:bg-purple-900/10 pointer-events-none"></div>
         </div>
       </div>
 
