@@ -21,7 +21,11 @@ import {
   ArrowDownRight,
   AlertCircle,
   CheckCircle,
-  Clock
+  Clock,
+  CalendarClock,
+  Plus,
+  Upload,
+  Bell,
 } from "lucide-react";
 import {
   PieChart,
@@ -49,6 +53,7 @@ export default function Dashboard() {
   const [recentTransactions, setRecentTransactions] = useState([]);
   const [topBudgets, setTopBudgets] = useState([]);
   const [savingsGoals, setSavingsGoals] = useState([]);
+  const [upcomingBills, setUpcomingBills] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -73,13 +78,14 @@ export default function Dashboard() {
   const loadData = async () => {
     setLoading(true);
     try {
-      const [summaryData, categorySpending, trends, transactions, budgets, goals] = await Promise.all([
+      const [summaryData, categorySpending, trends, transactions, budgets, goals, bills] = await Promise.all([
         analyticsService.getSummary(),
         analyticsService.getCategorySpending(),
         analyticsService.getMonthlyTrends(),
         transactionService.getAll(),
         budgetService.getAll(),
         savingsGoalService.getAll(),
+        transactionService.getUpcomingRecurring().catch(() => []),
       ]);
       setSummary(summaryData);
       setCategoryData(categorySpending);
@@ -87,6 +93,7 @@ export default function Dashboard() {
       setRecentTransactions(transactions.slice(0, 5));
       setTopBudgets(budgets.slice(0, 4));
       setSavingsGoals(goals.slice(0, 3));
+      setUpcomingBills(bills);
     } catch (error) {
       console.error("Error loading dashboard data:", error);
     } finally {
@@ -463,6 +470,139 @@ export default function Dashboard() {
               </div>
             </>
           )}
+        </div>
+      </div>
+
+      {/* ── Row 5: Upcoming Bills + Quick Actions ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+        {/* Upcoming Bills Widget */}
+        <div
+          className="rounded-2xl p-5"
+          style={{
+            background: "var(--color-surface)",
+            border: "1px solid var(--color-border)",
+            boxShadow: "var(--shadow-card)",
+          }}
+        >
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-sm font-bold flex items-center gap-2" style={{ color: "var(--color-text-primary)" }}>
+              <CalendarClock size={16} className="text-orange-500" />
+              Upcoming Bills
+            </h3>
+            <button
+              onClick={() => navigate("/transactions")}
+              className="text-xs font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-700 transition-colors"
+            >
+              View All →
+            </button>
+          </div>
+
+          {upcomingBills.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-8 text-center">
+              <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-900 flex items-center justify-center mb-2">
+                <Bell className="h-6 w-6" style={{ color: "var(--color-text-muted)" }} />
+              </div>
+              <p className="text-sm font-medium" style={{ color: "var(--color-text-secondary)" }}>No upcoming bills</p>
+              <p className="text-xs mt-1" style={{ color: "var(--color-text-muted)" }}>No recurring payments due in the next 3 days</p>
+              <button
+                onClick={() => navigate("/transactions")}
+                className="mt-2 text-xs font-semibold text-primary-600 dark:text-primary-400 hover:underline"
+              >
+                Add recurring transaction →
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {upcomingBills.map((bill) => {
+                const dueDate = new Date(bill.nextDueDate);
+                const today = new Date();
+                today.setHours(0,0,0,0);
+                dueDate.setHours(0,0,0,0);
+                const daysUntilDue = Math.round((dueDate - today) / (1000 * 60 * 60 * 24));
+                const isUrgent = daysUntilDue <= 1;
+                const urgentBg = isUrgent
+                  ? "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800"
+                  : "bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800";
+                return (
+                  <div
+                    key={bill.id}
+                    className={`flex items-center justify-between p-3 rounded-xl border ${urgentBg} transition-all`}
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className={`w-2 h-2 rounded-full shrink-0 ${isUrgent ? "bg-red-500" : "bg-orange-500"}`} />
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold truncate" style={{ color: "var(--color-text-primary)" }}>
+                          {bill.description || bill.merchant || bill.category}
+                        </p>
+                        <p className="text-[11px] mt-0.5" style={{ color: "var(--color-text-muted)" }}>
+                          {bill.category} · {bill.recurringFrequency}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0 ml-3">
+                      <p className={`text-sm font-bold ${isUrgent ? "text-red-600 dark:text-red-400" : "text-orange-600 dark:text-orange-400"}`}>
+                        ₹{Number(bill.amount).toLocaleString()}
+                      </p>
+                      <p className="text-[11px] mt-0.5" style={{ color: "var(--color-text-muted)" }}>
+                        {daysUntilDue === 0 ? "Today" : daysUntilDue === 1 ? "Tomorrow" : `In ${daysUntilDue} days`}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Quick Actions */}
+        <div
+          className="rounded-2xl p-5"
+          style={{
+            background: "var(--color-surface)",
+            border: "1px solid var(--color-border)",
+            boxShadow: "var(--shadow-card)",
+          }}
+        >
+          <h3 className="text-sm font-bold mb-4" style={{ color: "var(--color-text-primary)" }}>Quick Actions</h3>
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              {
+                label: "Add Transaction",
+                icon: Plus,
+                gradient: "from-purple-500 to-pink-500",
+                path: "/transactions",
+              },
+              {
+                label: "Upload Receipt",
+                icon: Upload,
+                gradient: "from-blue-500 to-cyan-500",
+                path: "/transactions",
+              },
+              {
+                label: "Set Budget",
+                icon: Target,
+                gradient: "from-green-500 to-emerald-500",
+                path: "/budgets",
+              },
+              {
+                label: "Create Goal",
+                icon: Sparkles,
+                gradient: "from-orange-500 to-red-500",
+                path: "/savings",
+              },
+            ].map(({ label, icon: Icon, gradient, path }) => (
+              <button
+                key={label}
+                onClick={() => navigate(path)}
+                className={`group relative overflow-hidden rounded-2xl p-4 text-left transition-all duration-200 hover:scale-[1.03] hover:shadow-lg bg-gradient-to-br ${gradient}`}
+              >
+                <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <Icon className="h-6 w-6 text-white mb-2 transition-transform group-hover:scale-110" />
+                <p className="text-xs font-bold text-white leading-tight">{label}</p>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 

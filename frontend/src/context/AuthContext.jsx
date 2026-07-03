@@ -20,8 +20,13 @@ export const AuthProvider = ({ children }) => {
     const userData = localStorage.getItem("user");
 
     if (token && userData) {
-      setUser(JSON.parse(userData));
-      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      try {
+        setUser(JSON.parse(userData));
+        api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      } catch (e) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      }
     }
     setLoading(false);
   }, []);
@@ -29,24 +34,30 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const response = await api.post("/auth/login", { email, password });
-      
-      if (response.data && response.data.success) {
-        const { accessToken, user: userData } = response.data.data;
-        localStorage.setItem("token", accessToken);
+      const data = response.data;
+
+      // Support both response formats:
+      // Format A (current backend): { token, message, user }
+      // Format B (ApiResponse wrapper): { success, message, data: { accessToken, user } }
+      const token = data?.token || data?.data?.accessToken || data?.accessToken;
+      const userData = data?.user || data?.data?.user;
+
+      if (token && userData) {
+        localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(userData));
-        api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+        api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
         setUser(userData);
         return { success: true };
       } else {
         return {
           success: false,
-          message: response.data?.message || "Login failed",
+          message: data?.message || "Login failed",
         };
       }
     } catch (error) {
       return {
         success: false,
-        message: error.response?.data?.message || "Login failed",
+        message: error.response?.data?.message || error.response?.data?.error || "Invalid email or password",
       };
     }
   };
@@ -58,24 +69,30 @@ export const AuthProvider = ({ children }) => {
         email,
         password,
       });
+      const data = response.data;
 
-      if (response.data && response.data.success) {
-        const { accessToken, user: userData } = response.data.data;
-        localStorage.setItem("token", accessToken);
+      // Support both response formats:
+      // Format A (current backend): { token, message, user }
+      // Format B (ApiResponse wrapper): { success, message, data: { accessToken, user } }
+      const token = data?.token || data?.data?.accessToken || data?.accessToken;
+      const userData = data?.user || data?.data?.user;
+
+      if (token && userData) {
+        localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(userData));
-        api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+        api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
         setUser(userData);
         return { success: true };
       } else {
         return {
           success: false,
-          message: response.data?.message || "Registration failed",
+          message: data?.message || "Registration failed",
         };
       }
     } catch (error) {
       return {
         success: false,
-        message: error.response?.data?.message || "Registration failed",
+        message: error.response?.data?.message || error.response?.data?.error || "Registration failed",
       };
     }
   };

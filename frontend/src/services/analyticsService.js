@@ -89,10 +89,12 @@ export const analyticsService = {
             month: monthName,
             income: 0,
             expenses: 0,
+            count: 0,
             sortKey: `${year}-${monthNum.toString().padStart(2, "0")}`,
           };
         }
 
+        monthMap[key].count += 1;
         if (t.type === "INCOME") {
           monthMap[key].income += t.amount || 0;
         } else {
@@ -104,10 +106,12 @@ export const analyticsService = {
       return Object.values(monthMap)
         .sort((a, b) => a.sortKey.localeCompare(b.sortKey))
         .slice(-6)
-        .map(({ month, income, expenses }) => ({
+        .map(({ month, income, expenses, count }) => ({
           month,
           income: Math.round(income),
           expenses: Math.round(expenses),
+          expense: Math.round(expenses), // alias for Analytics.jsx
+          count: count || 0,
         }));
     } catch (error) {
       return [];

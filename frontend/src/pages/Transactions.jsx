@@ -108,6 +108,8 @@ export default function Transactions() {
       transactionDate: transaction.transactionDate,
       merchant: transaction.merchant || "",
       paymentMethod: transaction.paymentMethod || "CASH",
+      isRecurring: transaction.isRecurring || false,
+      recurringFrequency: transaction.recurringFrequency || "",
     });
     setShowModal(true);
   };
