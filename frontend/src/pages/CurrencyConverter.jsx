@@ -121,7 +121,7 @@ export default function CurrencyConverter() {
 
           {/* Result */}
           {result && result.convertedAmount && (
-            <div className="relative overflow-hidden">
+            <div className="relative overflow-hidden rounded-2xl">
               <div className="absolute inset-0 bg-gradient-to-br from-green-200 to-teal-200 dark:from-green-900 dark:to-teal-900 blur-2xl opacity-30"></div>
               <div className="relative bg-gradient-to-br from-green-500 to-teal-600 text-white rounded-2xl p-8 text-center shadow-2xl border-4 border-white/30">
                 <p className="text-sm font-semibold opacity-90 mb-3">

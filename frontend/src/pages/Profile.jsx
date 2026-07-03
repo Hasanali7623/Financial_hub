@@ -148,8 +148,8 @@ export default function Profile() {
       {/* User Info Container */}
       <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 sm:p-8 shadow-sm border border-gray-300 dark:border-gray-600">
         <div className="flex flex-col md:flex-row items-center md:items-start gap-6 sm:gap-8 mb-8">
-          <div className="relative shrink-0">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-indigo-600 rounded-full blur-xl opacity-40"></div>
+          <div className="relative shrink-0 overflow-hidden rounded-full" style={{ padding: "8px" }}>
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-indigo-600 rounded-full blur-xl opacity-40" style={{ margin: "-4px" }}></div>
             <div className="relative h-28 w-28 rounded-full bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 flex items-center justify-center text-white text-5xl font-bold shadow-lg ring-4 ring-white dark:ring-gray-800">
               {user?.name?.charAt(0).toUpperCase()}
             </div>

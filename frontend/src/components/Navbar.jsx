@@ -58,11 +58,15 @@ export default function Navbar({ onMenuClick }) {
         isScrolled ? "shadow-lg" : ""
       }`}
       style={{
+        /* Semi-transparent bg when scrolled so backdrop-blur is actually visible */
         background: isScrolled
-          ? "rgba(var(--navbar-rgb, 255,255,255), 0.97)"
+          ? darkMode
+            ? "rgba(15, 23, 42, 0.92)"
+            : "rgba(255, 255, 255, 0.92)"
           : "var(--color-surface)",
         borderBottom: `1px solid ${isScrolled ? "rgba(0,0,0,0.08)" : "var(--color-border)"}`,
-        backdropFilter: "blur(12px)",
+        backdropFilter: isScrolled ? "blur(14px) saturate(180%)" : "none",
+        WebkitBackdropFilter: isScrolled ? "blur(14px) saturate(180%)" : "none",
       }}
     >
       {/* Accent strip */}
